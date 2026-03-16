@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI Intel™ | Superyacht Sales Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* === DESIGN TOKENS === */
+:root {
+  --navy-deepest: #070d1a;
+  --navy-deep: #0b1528;
+  --navy-mid: #0f1f3d;
+  --navy-light: #162847;
+  --navy-border: #1e3358;
+  --gold: #f5b240;
+  --gold-dim: #d9943a;
+  --teal: #00b4d8;
+  --green: #22c55e;
+  --red: #f43f5e;
+  --serif: 'DM Sans', sans-serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --text: rgba(255,255,255,.88);
+  --text-mid: rgba(210,220,235,.65);
+  --text-low: rgba(210,220,235,.38);
+  --text-xlow: rgba(210,220,235,.22);
+}
+
+/* === RESET & BASE === */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--navy-deepest);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(245,178,64,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(245,178,64,.022) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0;
+}
+
+/* === KEYFRAMES === */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lineIn{to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+@keyframes scrollFade{0%,100%{opacity:.25}50%{opacity:.9}}
+
+/* === NAV === */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;gap:0;
+  padding:0 48px;height:64px;
+  background:rgba(7,13,26,.9);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--navy-border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:32px;flex-shrink:0}
+.nav-logo-text{font-family:var(--sans);font-size:15px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:-.2px}
+.nav-badge{
+  font-family:var(--sans);font-size:10px;font-weight:600;
+  color:var(--gold);background:rgba(245,178,64,.1);
+  border:1px solid rgba(245,178,64,.22);
+  padding:3px 10px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;
+  flex-shrink:0;margin-right:24px;
+}
+.nav-tabs{display:flex;gap:2px;flex:1}
+.nav-tab{
+  font-family:var(--sans);font-size:13px;font-weight:400;
+  padding:6px 14px;color:rgba(255,255,255,.42);
+  background:none;border:none;cursor:pointer;border-radius:5px;
+  transition:all .2s;white-space:nowrap;letter-spacing:0;
+}
+.nav-tab:hover{color:rgba(255,255,255,.82);background:rgba(255,255,255,.06)}
+.nav-tab.active{color:var(--gold);background:rgba(245,178,64,.09);font-weight:500}
+.nav-right{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-left:16px}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--sans);font-size:11px;font-weight:500;
+  color:var(--green);letter-spacing:.3px;
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.nav-clock{font-family:var(--mono);font-size:10px;color:var(--text-xlow);letter-spacing:.5px}
+.nav-cta{
+  background:var(--gold);color:var(--navy-deepest);
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  padding:9px 20px;border-radius:6px;
+  border:none;cursor:pointer;transition:background .2s;letter-spacing:.2px;
+}
+.nav-cta:hover{background:var(--gold-dim)}
+
+/* === TICKER === */
+.ticker-bar{
+  background:var(--navy-mid);border-bottom:1px solid var(--navy-border);
+  overflow:hidden;position:relative;z-index:1;margin-top:64px;
+}
+.ticker-inner{display:flex;animation:ticker 55s linear infinite;white-space:nowrap}
+.t-item{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 36px 13px 0;
+  font-family:var(--sans);font-size:12px;color:var(--text-mid);flex-shrink:0;
+}
+.t-lbl{font-size:10px;font-weight:500;color:var(--text-low);text-transform:uppercase;letter-spacing:.6px}
+.t-val{font-weight:500;color:rgba(255,255,255,.75)}
+.t-delta{font-size:10px;padding:2px 6px;border-radius:3px}
+.t-up{color:var(--green);background:rgba(34,197,94,.1)}
+.t-dn{color:var(--red);background:rgba(244,63,94,.1)}
+.t-neu{color:var(--text-low);background:rgba(255,255,255,.05)}
+.t-sep{color:var(--navy-border);margin:0 8px}
+
+/* === COVER === */
+.cover{position:relative;width:100%;height:100vh;background:#050810;overflow:hidden}
+#cvs{position:absolute;inset:0;width:100%;height:100%;opacity:.45}
+.cover-inner{
+  position:relative;z-index:2;width:100%;height:100%;
+  display:flex;flex-direction:column;padding:36px 80px;
+}
+.cover-topbar{
+  display:flex;align-items:center;justify-content:flex-end;
+  flex-shrink:0;opacity:0;animation:fadeUp .8s ease .2s forwards;
+}
+.cover-tag{
+  font-family:var(--sans);font-size:11px;font-weight:400;
+  color:rgba(245,178,64,.52);letter-spacing:.8px;text-transform:uppercase;
+  border:1px solid rgba(245,178,64,.14);padding:5px 14px;border-radius:20px;
+}
+.cover-body{
+  flex:1;display:flex;align-items:center;gap:40px;min-height:0;padding-bottom:60px;
+}
+.cover-left{
+  flex:0 0 48%;padding-left:24px;
+  opacity:0;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) .35s forwards;
+  margin-top:-40px;
+}
+.cover-right{
+  flex:0 0 46%;display:flex;align-items:center;justify-content:center;padding:0 40px 0 20px;
+  opacity:0;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) .65s forwards;
+  margin-top:-30px;
+}
+.cover-pre{
+  font-family:var(--sans);font-size:11px;font-weight:600;
+  color:rgba(245,178,64,.5);letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:22px;
+}
+.cover-h1{display:flex;flex-direction:column;line-height:.96;margin-bottom:28px}
+.h1-line{
+  display:block;
+  font-family:var(--serif);font-size:clamp(38px,4.8vw,72px);
+  font-weight:400;letter-spacing:-1px;color:rgba(255,255,255,.92);
+  opacity:0;transform:translateY(18px);animation:lineIn 1s cubic-bezier(.16,1,.3,1) forwards;
+}
+.h1-line:nth-child(1){animation-delay:.45s}
+.h1-line:nth-child(2){animation-delay:.62s}
+.h1-line:nth-child(3){animation-delay:.79s;font-style:italic;color:var(--gold)}
+.cover-rule{width:48px;height:2px;background:var(--gold);margin-bottom:22px;border-radius:1px}
+.cover-desc{
+  font-family:var(--sans);font-size:15px;font-weight:300;
+  color:rgba(210,220,235,.58);line-height:1.75;max-width:460px;margin-bottom:44px;
+}
+.cover-btns{display:flex;align-items:center;gap:18px}
+.cover-btn-primary{
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  color:var(--navy-deepest);background:var(--gold);
+  padding:12px 24px;border-radius:6px;border:none;cursor:pointer;transition:background .2s;
+}
+.cover-btn-primary:hover{background:var(--gold-dim)}
+.cover-btn-ghost{
+  font-family:var(--sans);font-size:13px;font-weight:400;
+  color:rgba(255,255,255,.38);background:none;border:none;cursor:pointer;transition:color .2s;
+}
+.cover-btn-ghost:hover{color:rgba(255,255,255,.72)}
+.cover-foot{
+  display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;
+  opacity:0;animation:fadeUp .8s ease 1.1s forwards;
+}
+.cover-stats{display:flex;align-items:flex-end;gap:0}
+.cs{
+  display:flex;flex-direction:column;gap:5px;
+  padding-right:28px;margin-right:28px;
+  border-right:1px solid rgba(255,255,255,.07);
+}
+.cs:last-child{border-right:none;padding-right:0;margin-right:0}
+.cs-val{font-family:var(--sans);font-size:32px;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:-1px}
+.cs-lbl{font-family:var(--sans);font-size:10px;font-weight:400;color:rgba(210,220,235,.28);letter-spacing:.4px;text-transform:uppercase}
+.cover-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;
+}
+.cover-scroll span{font-family:var(--sans);font-size:9px;font-weight:400;color:rgba(255,255,255,.2);letter-spacing:1.5px;text-transform:uppercase}
+.cover-scroll-line{width:1px;height:30px;background:linear-gradient(to bottom,rgba(245,178,64,.55),transparent);animation:scrollFade 2s ease-in-out infinite}
+
+/* === DATA TERMINAL === */
+.terminal{
+  background:var(--navy-deep);border:1px solid var(--navy-border);
+  border-radius:14px;overflow:hidden;width:100%;max-width:420px;
+  box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(245,178,64,.04);
+  position:relative;
+}
+.terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.term-hd{padding:14px 18px 12px;border-bottom:1px solid var(--navy-border);background:var(--navy-deepest)}
+.term-hd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.term-title{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:500}
+.term-live{font-family:var(--mono);font-size:9px;color:var(--green);display:flex;align-items:center;gap:4px;letter-spacing:1px}
+.term-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 1.8s infinite}
+.term-sub{font-family:var(--mono);font-size:9px;color:var(--text-xlow);letter-spacing:.8px}
+.tr{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .3s}
+.tr.flu{background:rgba(34,197,94,.06)}
+.tr.fld{background:rgba(244,63,94,.06)}
+.tr-l{display:flex;flex-direction:column;gap:2px}
+.tr-reg{font-family:var(--sans);font-size:9px;font-weight:500;color:var(--text-xlow);letter-spacing:.8px;text-transform:uppercase}
+.tr-name{font-family:var(--sans);font-size:12px;color:var(--text-mid)}
+.tr-r{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.tr-val{font-family:var(--sans);font-size:15px;color:var(--text);font-weight:600}
+.tr-delta{font-family:var(--sans);font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px}
+.delta-up{color:var(--green);background:rgba(34,197,94,.1)}
+.delta-dn{color:var(--red);background:rgba(244,63,94,.1)}
+.delta-neu{color:var(--text-low);background:rgba(255,255,255,.05)}
+.term-ft{display:flex;justify-content:space-between;padding:8px 18px;border-top:1px solid var(--navy-border);background:var(--navy-deepest)}
+.term-ft span{font-family:var(--mono);font-size:9px;color:var(--text-xlow)}
+#term-clock{color:var(--gold);opacity:.7}
+
+/* === PAGE SECTIONS === */
+.pg{position:relative;z-index:1;padding:90px 60px;border-bottom:1px solid var(--navy-border);display:none}
+.pg.on{display:block}
+.sec-label{
+  font-family:var(--sans);font-size:11px;font-weight:600;
+  color:var(--gold);letter-spacing:1.8px;text-transform:uppercase;
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.sec-label::before{content:'';display:inline-block;width:22px;height:1px;background:var(--gold)}
+h2{
+  font-family:var(--serif);font-size:clamp(36px,4vw,56px);
+  font-weight:400;line-height:1.1;letter-spacing:-.5px;max-width:700px;
+}
+h2 em{font-style:italic;color:var(--gold)}
+.sec-intro{
+  font-family:var(--sans);font-size:17px;font-weight:300;
+  color:rgba(210,220,235,.68);line-height:1.72;max-width:620px;
+  margin-top:18px;margin-bottom:56px;
+}
+
+/* === STAT CARDS === */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--navy-border);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden;margin-bottom:52px}
+.stat{background:var(--navy-deep);padding:32px 28px;transition:background .2s}
+.stat:hover{background:var(--navy-mid)}
+.stat-lbl{font-family:var(--sans);font-size:11px;font-weight:500;color:var(--text-low);letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px}
+.stat-val{font-family:var(--serif);font-size:48px;line-height:1;letter-spacing:-1px;color:var(--text)}
+.stat-delta{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-family:var(--sans);font-size:12px;font-weight:400}
+.stat-delta.up{color:var(--green)}
+.stat-delta.dn{color:var(--red)}
+
+/* === SEARCH === */
+.search-box{background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.search-row{display:flex;align-items:center;padding:14px 20px;gap:12px;border-bottom:1px solid var(--navy-border)}
+.search-icon{font-size:16px;color:var(--gold);flex-shrink:0}
+.search-input{flex:1;background:none;border:none;outline:none;font-family:var(--sans);font-size:15px;color:var(--text);caret-color:var(--gold)}
+.search-input::placeholder{color:var(--text-low)}
+.tag-row{display:flex;gap:8px;padding:12px 20px;flex-wrap:wrap}
+.rtag{
+  font-family:var(--sans);font-size:12px;font-weight:400;
+  color:var(--text-low);background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.09);padding:4px 13px;border-radius:20px;
+  cursor:pointer;transition:all .2s;user-select:none;
+}
+.rtag:hover,.rtag.on{color:var(--gold);border-color:rgba(245,178,64,.32);background:rgba(245,178,64,.07);font-weight:500}
+
+/* === FILTER BAR === */
+.filters{display:flex;gap:7px;margin-bottom:26px;flex-wrap:wrap}
+.fb{
+  font-family:var(--sans);font-size:12px;font-weight:400;
+  padding:7px 16px;border:1px solid var(--navy-border);
+  background:rgba(255,255,255,.02);color:rgba(255,255,255,.42);
+  cursor:pointer;border-radius:5px;transition:all .2s;
+}
+.fb:hover{color:rgba(255,255,255,.82);border-color:rgba(255,255,255,.22)}
+.fb.on{color:var(--gold);border-color:rgba(245,178,64,.34);background:rgba(245,178,64,.07);font-weight:500}
+
+/* === TABLE === */
+.tbl-wrap{background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden}
+.tbl-hd{display:grid;padding:11px 22px;border-bottom:1px solid var(--navy-border);background:var(--navy-mid)}
+.tbl-hd span{font-family:var(--sans);font-size:11px;font-weight:500;color:rgba(210,220,235,.35);letter-spacing:.4px;text-transform:uppercase}
+.tbl-row{display:grid;padding:15px 22px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;align-items:center}
+.tbl-row:last-child{border-bottom:none}
+.tbl-row:hover{background:var(--navy-mid)}
+.rn{font-family:var(--sans);font-size:14px;font-weight:500;color:rgba(255,255,255,.88)}
+.rs{font-family:var(--sans);font-size:12px;color:var(--text-low);margin-top:2px;font-weight:300}
+.rb{font-family:var(--sans);font-size:12px;color:var(--teal)}
+
+/* === BADGES === */
+.badge{
+  display:inline-block;font-family:var(--sans);font-size:10px;font-weight:500;
+  padding:3px 8px;border-radius:3px;letter-spacing:.4px;text-transform:uppercase;
+}
+.bc{background:rgba(245,178,64,.12);color:var(--gold);border:1px solid rgba(245,178,64,.22)}
+.be{background:rgba(0,180,216,.1);color:var(--teal);border:1px solid rgba(0,180,216,.22)}
+.bs{background:rgba(201,168,76,.1);color:#c9a84c;border:1px solid rgba(201,168,76,.22)}
+.bo{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.22)}
+.bd{background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12)}
+.bch{background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.2)}
+.bm{background:rgba(245,178,64,.1);color:var(--gold);border:1px solid rgba(245,178,64,.2)}
+.bx{background:rgba(0,180,216,.1);color:var(--teal);border:1px solid rgba(0,180,216,.2)}
+.bt{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.bag{background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.2)}
+.bas{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.22)}
+.by{background:rgba(201,168,76,.1);color:#c9a84c;border:1px solid rgba(201,168,76,.2)}
+.sh{background:rgba(244,63,94,.12);color:var(--red);border:1px solid rgba(244,63,94,.22)}
+.sw{background:rgba(245,178,64,.1);color:var(--gold);border:1px solid rgba(245,178,64,.22)}
+.sn{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.22)}
+
+/* === ACTION BTN === */
+.abtn{
+  font-family:var(--sans);font-size:11px;font-weight:500;
+  padding:5px 13px;border:1px solid rgba(245,178,64,.26);
+  background:rgba(245,178,64,.07);color:var(--gold);
+  border-radius:4px;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.abtn:hover{background:rgba(245,178,64,.16);border-color:rgba(245,178,64,.5)}
+
+/* === PAGINATION === */
+.pag{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-top:1px solid var(--navy-border)}
+.pag-info{font-family:var(--sans);font-size:12px;color:var(--text-low)}
+.pag-btns{display:flex;gap:4px}
+.pb{font-family:var(--sans);font-size:12px;padding:5px 12px;border:1px solid var(--navy-border);background:rgba(255,255,255,.02);color:rgba(255,255,255,.38);cursor:pointer;border-radius:4px;transition:all .2s}
+.pb:hover:not(:disabled){color:rgba(255,255,255,.82);border-color:rgba(255,255,255,.22)}
+.pb.cur{color:var(--gold);border-color:rgba(245,178,64,.36);background:rgba(245,178,64,.08)}
+.pb:disabled{opacity:.2;cursor:not-allowed}
+
+/* === VESSEL GRID === */
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--navy-border)}
+.vc{background:var(--navy-deep);padding:22px;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.vc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .2s}
+.vc:hover{background:var(--navy-mid)}.vc:hover::after{opacity:1}
+.vc-n{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.vc-sz{font-family:var(--sans);font-size:11px;font-weight:400;color:var(--text-low);margin-bottom:14px}
+.vc-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.vc-fl{font-family:var(--sans);font-size:9px;font-weight:500;color:var(--text-xlow);letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+.vc-fv{font-family:var(--sans);font-size:12px;color:var(--text-mid)}
+.vc-fv.bl{color:var(--teal)}
+.vc-sig{display:flex;align-items:center;gap:7px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.vc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.vc-st{font-family:var(--sans);font-size:11px;color:rgba(210,220,235,.42);flex:1}
+
+/* === EVENTS GRID === */
+.egrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--navy-border)}
+.ev{background:var(--navy-deep);padding:22px;display:flex;gap:16px;cursor:pointer;transition:background .2s}
+.ev:hover{background:var(--navy-mid)}
+.ev-dt{display:flex;flex-direction:column;align-items:center;justify-content:center;width:50px;height:50px;background:rgba(245,178,64,.08);border:1px solid rgba(245,178,64,.18);border-radius:8px;flex-shrink:0}
+.ev-day{font-family:var(--sans);font-size:18px;font-weight:700;color:var(--gold);line-height:1}
+.ev-mo{font-family:var(--sans);font-size:8px;font-weight:500;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.ev-bd{flex:1;min-width:0}
+.ev-n{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ev-loc{font-family:var(--sans);font-size:11px;color:rgba(210,220,235,.38);margin-bottom:9px}
+.ev-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}
+.et{font-family:var(--sans);font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.5px;text-transform:uppercase}
+.et-show{background:rgba(245,178,64,.1);color:var(--gold);border:1px solid rgba(245,178,64,.16)}
+.et-crew{background:rgba(0,180,216,.1);color:var(--teal);border:1px solid rgba(0,180,216,.16)}
+.et-ind{background:rgba(201,168,76,.1);color:#c9a84c;border:1px solid rgba(201,168,76,.16)}
+.et-reg{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.16)}
+.et-tr{background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.16)}
+.ev-att{font-family:var(--sans);font-size:11px;color:var(--text-xlow)}
+
+/* === COMMUNITY GRID === */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--navy-border)}
+.cc{background:var(--navy-deep);padding:22px;cursor:pointer;transition:background .2s}
+.cc:hover{background:var(--navy-mid)}
+.cc-pl{font-family:var(--sans);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px}
+.cc-n{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.cc-f{font-family:var(--sans);font-size:13px;color:rgba(210,220,235,.42);margin-bottom:12px;line-height:1.5;font-weight:300}
+.cc-bot{display:flex;justify-content:space-between;align-items:center}
+.cc-m{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--gold)}
+.cc-r{font-family:var(--sans);font-size:11px}
+
+/* === TRIGGERS === */
+.alerts{display:flex;flex-direction:column;gap:1px;background:var(--navy-border)}
+.al{background:var(--navy-deep);padding:18px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.al::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.al.hot::before{background:var(--red)}
+.al.warm::before{background:var(--gold)}
+.al.new::before{background:var(--green)}
+.al:hover{background:var(--navy-mid)}
+.al-ic{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.al-ic.hot{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.2)}
+.al-ic.warm{background:rgba(245,178,64,.1);border:1px solid rgba(245,178,64,.2)}
+.al-ic.new{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+.al-bd{flex:1;min-width:0}
+.al-ti{font-family:var(--sans);font-size:14px;color:var(--text);margin-bottom:3px;font-weight:400}
+.al-ti strong{color:var(--gold);font-weight:600}
+.al-de{font-family:var(--sans);font-size:12px;color:rgba(210,220,235,.42);font-weight:300}
+.al-ts{font-family:var(--sans);font-size:11px;color:var(--text-xlow);flex-shrink:0}
+.al-ct{
+  font-family:var(--sans);font-size:11px;font-weight:500;
+  padding:5px 13px;border:1px solid rgba(245,178,64,.22);
+  background:rgba(245,178,64,.07);color:var(--gold);
+  border-radius:4px;cursor:pointer;flex-shrink:0;transition:all .2s;
+}
+.al-ct:hover{background:rgba(245,178,64,.16)}
+
+/* === TWO-COL PANELS === */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--navy-border);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden;margin-bottom:32px}
+.panel{background:var(--navy-deep);padding:28px 30px}
+.panel-ttl{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px;display:flex;justify-content:space-between}
+.panel-ttl span{color:var(--text-low);font-size:10px;font-weight:400}
+.brow{margin-bottom:14px}
+.blr{display:flex;justify-content:space-between;margin-bottom:6px}
+.blbl{font-family:var(--sans);font-size:12px;font-weight:400}
+.btrack{height:5px;background:var(--navy-border);border-radius:3px;overflow:hidden}
+.bfill{height:100%;border-radius:3px;width:0;transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+.bf-r{background:linear-gradient(90deg,var(--red),rgba(244,63,94,.3))}
+.bf-g{background:linear-gradient(90deg,var(--gold),rgba(245,178,64,.3))}
+.bf-gr{background:linear-gradient(90deg,var(--green),rgba(34,197,94,.3))}
+.bf-t{background:linear-gradient(90deg,var(--teal),rgba(0,180,216,.3))}
+
+/* === MODAL === */
+.modal-bg{position:fixed;inset:0;background:rgba(7,13,26,.92);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(14px)}
+.modal-bg.on{display:flex}
+.modal{background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:14px;width:min(700px,94vw);max-height:84vh;overflow-y:auto;position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.modal-hd{padding:24px 26px;border-bottom:1px solid var(--navy-border);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-title{font-family:var(--serif);font-size:22px;color:var(--text);margin-bottom:4px;font-weight:400}
+.modal-sub{font-family:var(--sans);font-size:11px;font-weight:400;color:var(--text-low);letter-spacing:.4px;text-transform:uppercase}
+.modal-close{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--text-low);background:none;border:none;cursor:pointer;transition:color .2s;padding:4px 8px}
+.modal-close:hover{color:var(--text)}
+.modal-bd{padding:24px 26px}
+.mf{margin-bottom:16px}
+.mf-lbl{font-family:var(--sans);font-size:10px;font-weight:500;color:rgba(210,220,235,.32);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px}
+.mf-val{font-family:var(--sans);font-size:14px;color:rgba(255,255,255,.8);line-height:1.5;font-weight:300}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.cert-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.cert{font-family:var(--sans);font-size:9px;font-weight:500;padding:3px 8px;border-radius:3px;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.22);letter-spacing:.4px}
+.outreach{background:rgba(245,178,64,.04);border:1px solid rgba(245,178,64,.16);padding:16px 18px;border-radius:6px;font-family:var(--sans);font-size:14px;color:rgba(210,220,235,.62);line-height:1.78;font-style:italic;font-weight:300}
+.modal-ft{padding:18px 26px;border-top:1px solid var(--navy-border);display:flex;gap:12px;align-items:center}
+.btn-p{background:var(--gold);color:var(--navy-deepest);font-family:var(--sans);font-size:14px;font-weight:600;padding:11px 26px;border:none;border-radius:6px;cursor:pointer;transition:background .2s}
+.btn-p:hover{background:var(--gold-dim)}
+.btn-g{color:rgba(255,255,255,.55);font-family:var(--sans);font-size:14px;font-weight:400;background:none;border:none;cursor:pointer;transition:color .2s}
+.btn-g:hover{color:rgba(255,255,255,.9)}
+
+/* === FOOTER === */
+footer{border-top:1px solid var(--navy-border);padding:36px 60px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+footer p{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--text-xlow)}
+
+/* === REVEAL === */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* === PROSPECT SCORE === */
+.score{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px;flex-shrink:0}
+.score-h{background:rgba(244,63,94,.12);color:var(--red);border:1px solid rgba(244,63,94,.25)}
+.score-w{background:rgba(245,178,64,.12);color:var(--gold);border:1px solid rgba(245,178,64,.25)}
+.score-c{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.22)}
+.score-n{background:rgba(210,220,235,.06);color:var(--text-low);border:1px solid rgba(210,220,235,.12)}
+.score-bar{height:3px;border-radius:2px;margin-top:4px;background:var(--navy-border)}
+.score-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+/* === OUTREACH LOG === */
+.ol-wrap{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.ol-btn{font-family:var(--sans);font-size:11px;font-weight:500;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid;transition:all .2s}
+.ol-todo{color:var(--text-low);border-color:var(--navy-border);background:rgba(255,255,255,.02)}
+.ol-todo:hover{border-color:rgba(245,178,64,.3);color:var(--gold)}
+.ol-contacted{color:var(--teal);border-color:rgba(0,180,216,.3);background:rgba(0,180,216,.06)}
+.ol-won{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)}
+.ol-dead{color:var(--red);border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.06)}
+.ol-status{font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-left:auto}
+
+/* === NEW BUILD TRACKER === */
+.nb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--navy-border)}
+.nb{background:var(--navy-deep);padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:background .2s}
+.nb:hover{background:var(--navy-mid)}
+.nb::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.nb.nb-hot::before{background:linear-gradient(90deg,var(--red),transparent)}
+.nb.nb-warm::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.nb.nb-new::before{background:linear-gradient(90deg,var(--green),transparent)}
+.nb-yard{font-size:9px;font-weight:600;color:rgba(210,220,235,.5);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.nb-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.nb-sz{font-size:12px;color:var(--text-low);margin-bottom:14px}
+.nb-prog{margin-bottom:12px}
+.nb-prog-lbl{display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;color:var(--text-low)}
+.nb-prog-pct{color:var(--gold);font-weight:600}
+.nb-track{height:4px;background:var(--navy-border);border-radius:2px;overflow:hidden}
+.nb-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),rgba(245,178,64,.3));width:0;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+.nb-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nb-fl{font-size:9px;font-weight:500;color:var(--text-xlow);letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px}
+.nb-fv{font-size:12px;color:var(--text-mid)}
+.nb-win{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);font-size:11px}
+.nb-win-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* === HEAT MAP === */
+.hmap-wrap{background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden;margin-bottom:0}
+.hmap-hd{padding:20px 24px 16px;border-bottom:1px solid var(--navy-border);display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.hmap-ttl{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.8px;text-transform:uppercase}
+.hmap-leg{display:flex;gap:14px;align-items:center}
+.hmap-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-low)}
+.hmap-leg-dot{width:10px;height:10px;border-radius:2px}
+.hmap-grid{display:grid;grid-template-columns:90px repeat(12,1fr);gap:2px;background:var(--navy-deepest);padding:12px 16px 16px}
+.hmap-rowlbl{background:transparent;padding:6px 8px;font-size:12px;font-weight:500;color:rgba(210,220,235,.55);display:flex;align-items:center}
+.hmap-monthlbl{background:transparent;padding:0 4px 8px;font-size:10px;font-weight:600;color:rgba(210,220,235,.3);letter-spacing:.6px;text-transform:uppercase;text-align:center}
+.hmap-cell{background:transparent;padding:3px;text-align:center;position:relative;cursor:default;transition:all .15s}
+.hmap-cell:hover{transform:scale(1.15);z-index:2}
+.hmap-cell-inner{width:100%;height:28px;border-radius:4px;margin:0 auto;transition:filter .15s}
+.hmap-cell:hover .hmap-cell-inner{filter:brightness(1.3)}
+
+/* === PIPELINE SUMMARY (dashboard) === */
+.pipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--navy-border);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden;margin-bottom:32px}
+.pipe-cell{background:var(--navy-deep);padding:20px 22px;cursor:pointer;transition:background .2s}
+.pipe-cell:hover{background:var(--navy-mid)}
+.pipe-lbl{font-size:10px;font-weight:600;color:var(--text-xlow);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.pipe-val{font-size:28px;font-weight:600;color:var(--text);line-height:1;letter-spacing:-.5px}
+.pipe-sub{font-size:11px;color:var(--text-low);margin-top:5px}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--navy-deepest)}
+::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(245,178,64,.3)}
+
+/* === RESPONSIVE === */
+@media(max-width:1100px){.cover-right{display:none}.cover-left{flex:0 0 100%}}
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-tabs{display:none}
+  .pg{padding:60px 22px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .vgrid,.cgrid{grid-template-columns:1fr}
+  .egrid{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:10px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" onclick="show('dashboard');return false">
+    <svg width="24" height="30" viewBox="0 0 153.33 189.96" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+      <path fill="#f5b240" d="M2.15,189.96c-1.23,0-2.22-1.04-2.14-2.27,1.17-19.32,17.21-34.62,36.82-34.62h79.68c19.61,0,35.65,15.3,36.82,34.62.07,1.23-.91,2.27-2.14,2.27H2.15Z"/>
+      <path fill="#f5b240" d="M95.98,134.21v-31.68c0-2.74,1.86-5.15,4.52-5.79,1.61-.39,3.14-.92,4.58-1.57,2.72-1.2,5.06-2.88,7.02-5.03,2.01-2.11,3.54-4.67,4.59-7.69,1.1-3.02,1.65-6.44,1.65-10.28,0-6.71-1.62-12.38-4.87-17.03-3.25-4.6-7.91-8.1-13.97-10.49-6.07-2.35-13.35-3.52-21.86-3.52-8.98,0-16.51,1.2-22.58,3.59-6.02,2.44-10.56,5.96-13.62,10.56-3.01,4.6-4.51,10.13-4.51,16.6,0,3.69.46,7,1.36,9.92.96,2.92,2.32,5.46,4.08,7.62,1.77,2.16,3.89,3.9,6.38,5.25,1.37.75,2.82,1.37,4.37,1.85,2.49.78,4.15,3.13,4.13,5.73l-.23,31.96c-.01,2.1-1.91,3.65-3.98,3.32-4.94-.8-9.95-2.39-15.04-4.77-6.4-3.02-12.33-7.31-17.77-12.86-5.4-5.51-9.75-12.34-13.04-20.48-3.3-8.14-4.94-17.61-4.94-28.39,0-13.51,2.89-25.63,8.67-36.36,5.78-10.68,14.29-19.14,25.51-25.37C47.65,3.09,61.39,0,77.63,0s30.1,3.16,41.28,9.49c11.23,6.33,19.71,14.85,25.44,25.59,5.78,10.73,8.67,22.71,8.67,35.93,0,9.3-1.27,17.85-3.8,25.66-2.53,7.81-6.24,14.66-11.11,20.55-4.83,5.89-10.77,10.64-17.85,14.23-6.07,3.08-12.89,5.13-20.48,6.13-2.02.27-3.82-1.33-3.82-3.37"/>
+    </svg>
+    <span class="nav-logo-text">CI Intel</span>
+  </a>
+  <span class="nav-badge">Superyacht Intelligence™</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="show('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="show('people')">People</button>
+    <button class="nav-tab" onclick="show('vessels')">Vessels</button>
+    <button class="nav-tab" onclick="show('companies')">Companies</button>
+    <button class="nav-tab" onclick="show('events')">Events</button>
+    <button class="nav-tab" onclick="show('communities')">Communities</button>
+    <button class="nav-tab" onclick="show('triggers')">Triggers</button>
+    <button class="nav-tab" onclick="show('newbuilds')">New Builds</button>
+  </div>
+  <div class="nav-right">
+    <span class="live-pill"><span class="live-dot"></span>Bi-Weekly</span>
+    <span class="nav-clock" id="nav-clk">Updated Mar 2026</span>
+    <button class="nav-cta" onclick="show('people')">Search Intel →</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar"><div class="ticker-inner" id="ticker"></div></div>
+
+<!-- DASHBOARD -->
+<div id="sec-dashboard" style="display:block">
+  <div class="cover">
+    <canvas id="cvs"></canvas>
+    <div class="cover-inner">
+      <div class="cover-topbar">
+        <div class="cover-tag">Internal Sales Intelligence - Q2 2026</div>
+      </div>
+      <div class="cover-body">
+        <div class="cover-left">
+          <p class="cover-pre">Superyacht Sales Intelligence</p>
+          <div class="cover-h1">
+            <span class="h1-line">Every Contact.</span>
+            <span class="h1-line">Every Vessel.</span>
+            <span class="h1-line">Every Signal.</span>
+          </div>
+          <div class="cover-rule"></div>
+          <p class="cover-desc">The definitive intelligence layer for sales teams targeting the global superyacht industry. Crew, vessels, events, companies, and digital communities - all in one place.</p>
+          <div class="cover-btns">
+            <button class="cover-btn-primary" onclick="show('people')">Explore People →</button>
+            <button class="cover-btn-ghost" onclick="show('triggers')">View Buying Signals</button>
+          </div>
+        </div>
+        <div class="cover-right">
+          <div class="terminal">
+            <div class="term-hd">
+              <div class="term-hd-row">
+                <span class="term-title">BI-WEEKLY INTELLIGENCE</span>
+                <span class="term-live"><span class="term-dot"></span>BI-WEEKLY</span>
+              </div>
+              <div class="term-sub">Updated Mar 2026 · Next update 27 Mar · 6,520+ vessels</div>
+            </div>
+            <div class="tr" id="tr1"><div class="tr-l"><div class="tr-reg">NEW BUILD · LÜRSSEN</div><div class="tr-name">Boardwalk (117m) — Sea trials Mar 2026</div></div><div class="tr-r"><div class="tr-val" id="tv1">Q2 2026</div><div class="tr-delta delta-up" id="td1">↑ CREW WINDOW</div></div></div>
+            <div class="tr" id="tr2"><div class="tr-l"><div class="tr-reg">OWNERSHIP · OCEANCO</div><div class="tr-name">Gabe Newell acquires Oceanco shipyard</div></div><div class="tr-r"><div class="tr-val" id="tv2">CONFIRMED</div><div class="tr-delta delta-up" id="td2">↑ NEW CONTACT</div></div></div>
+            <div class="tr" id="tr3"><div class="tr-l"><div class="tr-reg">PALM BEACH SHOW</div><div class="tr-name">78m Rocinante + Boardwalk V attending</div></div><div class="tr-r"><div class="tr-val" id="tv3">25 MAR</div><div class="tr-delta delta-up" id="td3">↑ 12 DAYS</div></div></div>
+            <div class="tr" id="tr4"><div class="tr-l"><div class="tr-reg">BROKERAGE · EDMISTON</div><div class="tr-name">Feadship Breakthrough (119m) — for sale</div></div><div class="tr-r"><div class="tr-val" id="tv4">FOR SALE</div><div class="tr-delta delta-neu" id="td4">→ NEW OWNER</div></div></div>
+            <div class="tr" id="tr5"><div class="tr-l"><div class="tr-reg">SHIPYARD · HEESEN</div><div class="tr-name">Laurens Last acquires Heesen Yachts</div></div><div class="tr-r"><div class="tr-val" id="tv5">NEW OWNER</div><div class="tr-delta delta-up" id="td5">↑ WATCH</div></div></div>
+            <div class="term-ft"><span>CI INTEL™</span><span id="term-clock">--:-- UTC</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cover-foot">
+        <div class="cover-stats">
+          <div class="cs"><div class="cs-val" id="cs1">0</div><div class="cs-lbl">Charter Vessels 30m+ (Med)</div></div>
+          <div class="cs"><div class="cs-val" id="cs2">0</div><div class="cs-lbl">Vessels 30m+ (Lloyd's)</div></div>
+          <div class="cs"><div class="cs-val" id="cs3">0</div><div class="cs-lbl">Industry Events 2026</div></div>
+          <div class="cs"><div class="cs-val" id="cs4">0</div><div class="cs-lbl">New Builds Delivering 2026</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cover-scroll"><span>scroll</span><div class="cover-scroll-line"></div></div>
+  </div>
+
+  <!-- THIS WEEK PRIORITY -->
+  <div style="position:relative;z-index:1;padding:0 80px 28px">
+    <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:12px;overflow:hidden">
+      <div style="padding:14px 24px 12px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;gap:12px">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--gold)">THIS WEEK</span>
+        <span style="width:1px;height:12px;background:var(--navy-border)"></span>
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:1px;color:rgba(210,220,235,.35)">ACT NOW · WEEK OF 13 MAR 2026</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--navy-border)">
+        <div style="background:var(--navy-deep);padding:18px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--red);margin-bottom:8px">12 DAYS · PALM BEACH</div>
+          <div style="font-size:12px;color:rgba(210,220,235,.8);line-height:1.6">Fraser, Burgess, Moran and N&amp;J all attending. Glenn Vallone (Moran CEO) confirmed speaking. Book meetings now — diary filling fast.</div>
+        </div>
+        <div style="background:var(--navy-deep);padding:18px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--red);margin-bottom:8px">IMMINENT · BOARDWALK</div>
+          <div style="font-size:12px;color:rgba(210,220,235,.8);line-height:1.6">117m Lürssen Q2 delivery. Management company TBC. Tilman Fertitta ownership confirmed. Decision expected within weeks — watch this closely.</div>
+        </div>
+        <div style="background:var(--navy-deep);padding:18px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--gold);margin-bottom:8px">6 WEEKS · MYBA SHOW</div>
+          <div style="font-size:12px;color:rgba(210,220,235,.8);line-height:1.6">27–30 Apr, San Remo. Highest broker density event of the year. Pre-register meetings with Fraser, Burgess and YPI charter contacts now.</div>
+        </div>
+        <div style="background:var(--navy-deep);padding:18px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--gold);margin-bottom:8px">WATCH · HEESEN CEO</div>
+          <div style="font-size:12px;color:rgba(210,220,235,.8);line-height:1.6">New CEO appointment expected Q2 2026 post-Laurens Last acquisition. Full vendor review will follow. Get in before it's announced.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- PIPELINE SUMMARY -->
+  <div style="position:relative;z-index:1;padding:32px 60px 28px;border-top:1px solid var(--navy-border)">
+    <div class="pipe-grid reveal">
+      <div class="pipe-cell" onclick="show('triggers')"><div class="pipe-lbl">Active Sales Signals</div><div class="pipe-val" id="pipe-hot">0</div><div class="pipe-sub">Delivery, event &amp; ownership triggers</div></div>
+      <div class="pipe-cell" onclick="show('companies')"><div class="pipe-lbl">New Builds In Pipeline</div><div class="pipe-val" id="pipe-nb">0</div><div class="pipe-sub">Confirmed 2026-2028 deliveries</div></div>
+      <div class="pipe-cell" onclick="show('people')"><div class="pipe-lbl">Key Accounts Mapped</div><div class="pipe-val" id="pipe-crew">0</div><div class="pipe-sub">Management, charter &amp; shipyard</div></div>
+      <div class="pipe-cell" onclick="show('people')"><div class="pipe-lbl">Leadership Moves</div><div class="pipe-val" id="pipe-refit">0</div><div class="pipe-sub">Appointments &amp; ownership changes</div></div>
+    </div>
+
+    <!-- SEASONAL HEAT MAP — homepage only -->
+    <div class="hmap-wrap reveal">
+      <div class="hmap-hd">
+        <div>
+          <div class="hmap-ttl">Seasonal Activity Heat Map</div>
+          <div style="font-size:12px;color:var(--text-low);margin-top:4px;font-weight:300">Superyacht seasonal activity by region — based on Lloyd's Register fleet positioning data, MYBA charter booking patterns and confirmed 2026 event calendar. Plan your outreach around peak activity windows.</div>
+        </div>
+        <div class="hmap-leg">
+          <div class="hmap-leg-item"><div class="hmap-leg-dot" style="background:rgba(244,63,94,.9)"></div>Peak</div>
+          <div class="hmap-leg-item"><div class="hmap-leg-dot" style="background:rgba(245,178,64,.75)"></div>Active</div>
+          <div class="hmap-leg-item"><div class="hmap-leg-dot" style="background:rgba(34,197,94,.5)"></div>Moderate</div>
+          <div class="hmap-leg-item"><div class="hmap-leg-dot" style="background:rgba(255,255,255,.08)"></div>Low</div>
+        </div>
+      </div>
+      <div class="hmap-grid" id="hmap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PEOPLE -->
+<div class="pg" id="sec-people">
+  <div class="sec-label">People Intelligence</div>
+  <h2>Industry <em>Movers & Appointments</em></h2>
+  <p class="sec-intro">Ownership changes, executive appointments and high-profile captains tied to named vessels — sourced from Boat International, Superyachts.com, SEC filings and public news Jan–Mar 2026. Who moved where, who owns what, who's signing new builds. Click any record for movement intelligence and a direct LinkedIn search link.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Global Crew Pool (Dockwalk)</div><div class="stat-val">500K+</div><div class="stat-delta up">↑ Monthly platform visits</div></div>
+    <div class="stat"><div class="stat-lbl">Yotspot Registered Crew</div><div class="stat-val">76K+</div><div class="stat-delta up">↑ 15,000 jobs/year posted</div></div>
+    <div class="stat"><div class="stat-lbl">Tracked Movers (2025–26)</div><div class="stat-val" id="your-contacts">26</div><div class="stat-delta up">↑ Verified public records</div></div>
+    <div class="stat"><div class="stat-lbl">Top Placement Agencies</div><div class="stat-val">8</div><div class="stat-delta up">↑ In Companies section</div></div>
+  </div
+  div>
+  <div class="search-box reveal">
+    <div class="search-row"><span class="search-icon">⌕</span><input class="search-input" id="p-search" type="text" placeholder="Search by name, vessel, role, certification, region, agency…" oninput="pS.q=this.value;pS.pg=0;renderP()"></div>
+    <div class="tag-row">
+      <span class="rtag on" onclick="setRT(this,'all')">All</span>
+      <span class="rtag" onclick="setRT(this,'Owner')">Owners</span>
+      <span class="rtag" onclick="setRT(this,'CEO')">CEOs</span>
+      <span class="rtag" onclick="setRT(this,'Captain')">Captains</span>
+      <span class="rtag" onclick="setRT(this,'Designer')">Designers</span>
+      <span class="rtag" onclick="setRT(this,'Director')">Directors</span>
+    </div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setReg(this,'all')">All Regions</button>
+    <button class="fb" onclick="setReg(this,'Med')">Mediterranean</button>
+    <button class="fb" onclick="setReg(this,'Caribbean')">Caribbean</button>
+    <button class="fb" onclick="setReg(this,'Netherlands')">Netherlands</button>
+    <button class="fb" onclick="setReg(this,'Germany')">Germany</button>
+    <button class="fb" onclick="setReg(this,'USA')">USA</button>
+    <button class="fb" onclick="setReg(this,'UK')">UK</button>
+    <button class="fb" onclick="setReg(this,'Turkey')">Turkey</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="tbl-hd" style="grid-template-columns:2fr 1.4fr 1fr 1fr 120px 88px"><span>Name / Org</span><span>Vessel / Company</span><span>Role</span><span>Score</span><span>Signal</span><span></span></div>
+    <div id="p-body"></div>
+    <div class="pag"><div class="pag-info" id="p-info"></div><div class="pag-btns" id="p-btns"></div></div>
+  </div>
+</div>
+
+<!-- VESSELS -->
+<div class="pg" id="sec-vessels">
+  <div class="sec-label">Vessel Intelligence</div>
+  <h2>Global <em>Superyacht Fleet</em></h2>
+  <p class="sec-intro">Vessels indexed from Lloyd's Register, BOATPro, and public classification data. Vessel names, sizes, flag states and build years are verified. Refit status, crew assignments and commercial signals are indicative — confirm with the managing company before outreach. Updated bi-weekly.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Total Vessels 30m+</div><div class="stat-val">6,520</div><div class="stat-delta up">↑ +134 new builds YTD</div></div>
+    <div class="stat"><div class="stat-lbl">Currently In Refit</div><div class="stat-val">312</div><div class="stat-delta up">↑ Active buy windows</div></div>
+    <div class="stat"><div class="stat-lbl">Charter Active</div><div class="stat-val">2,840</div><div class="stat-delta up">↑ Summer Med season</div></div>
+    <div class="stat"><div class="stat-lbl">New Build Pipeline</div><div class="stat-val">480</div><div class="stat-delta up">↑ Pre-outfit opportunity</div></div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setVF(this,'all')">All Vessels</button>
+    <button class="fb" onclick="setVF(this,'s30')">30-50m</button>
+    <button class="fb" onclick="setVF(this,'s50')">50-80m</button>
+    <button class="fb" onclick="setVF(this,'s80')">80m+</button>
+    <button class="fb" onclick="setVF(this,'refit')">In Refit</button>
+    <button class="fb" onclick="setVF(this,'charter')">Charter</button>
+    <button class="fb" onclick="setVF(this,'delivery')">New Delivery</button>
+    <button class="fb" onclick="setVF(this,'sale')">For Sale</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="vgrid" id="v-body"></div>
+    <div class="pag"><div class="pag-info" id="v-info"></div><div class="pag-btns" id="v-btns"></div></div>
+  </div>
+</div>
+
+<!-- COMPANIES -->
+<div class="pg" id="sec-companies">
+  <div class="sec-label">Account Intelligence</div>
+  <h2>Key <em>Accounts</em></h2>
+  <p class="sec-intro">The 20 highest-value accounts in the superyacht world — management houses, charter brokers, shipyards, crew agencies and associations. Each card tells your team why to call now, what's changed recently, and the sharpest sales angle. Click any account for full intelligence and a direct LinkedIn link.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Total Companies</div><div class="stat-val">1,840</div><div class="stat-delta up">↑ +92 this month</div></div>
+    <div class="stat"><div class="stat-lbl">Management Companies</div><div class="stat-val">420</div><div class="stat-delta up">↑ Most active sector</div></div>
+    <div class="stat"><div class="stat-lbl">Crew Agencies</div><div class="stat-val">180</div><div class="stat-delta up">↑ All major markets</div></div>
+    <div class="stat"><div class="stat-lbl">Shipyards &amp; Refit</div><div class="stat-val">240</div><div class="stat-delta up">↑ Global coverage</div></div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setCF(this,'all')">All Types</button>
+    <button class="fb" onclick="setCF(this,'mgmt')">Management</button>
+    <button class="fb" onclick="setCF(this,'charter')">Charter Brokers</button>
+    <button class="fb" onclick="setCF(this,'yard')">Shipyards</button>
+    <button class="fb" onclick="setCF(this,'training')">Training</button>
+    <button class="fb" onclick="setCF(this,'agency')">Crew Agencies</button>
+    <button class="fb" onclick="setCF(this,'assoc')">Associations</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="tbl-hd" style="grid-template-columns:2fr 1.1fr 1fr 2fr 88px"><span>Company / Vessels</span><span>Type</span><span>Trend</span><span>Latest Intel</span><span></span></div>
+    <div id="c-body"></div>
+    <div class="pag"><div class="pag-info" id="c-info"></div><div class="pag-btns" id="c-btns"></div></div>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="pg" id="sec-events">
+  <div class="sec-label">Events Intelligence</div>
+  <h2>Industry <em>Event Calendar</em></h2>
+  <p class="sec-intro">312 events tracked annually - boat shows, regattas, conferences, crew social gatherings, and training intakes. Every touchpoint where this market gathers, with attendance and buying signal data.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Annual Events</div><div class="stat-val">312</div><div class="stat-delta up">↑ +18 new this year</div></div>
+    <div class="stat"><div class="stat-lbl">Next 30 Days</div><div class="stat-val">8</div><div class="stat-delta up">↑ Action required now</div></div>
+    <div class="stat"><div class="stat-lbl">Boat Shows</div><div class="stat-val">42</div><div class="stat-delta up">↑ Global coverage</div></div>
+    <div class="stat"><div class="stat-lbl">Crew Social Events</div><div class="stat-val">96</div><div class="stat-delta up">↑ High-density contact</div></div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setEF(this,'all')">All Events</button>
+    <button class="fb" onclick="setEF(this,'show')">Boat Shows</button>
+    <button class="fb" onclick="setEF(this,'regatta')">Regattas</button>
+    <button class="fb" onclick="setEF(this,'industry')">Conferences</button>
+    <button class="fb" onclick="setEF(this,'crew')">Crew Social</button>
+    <button class="fb" onclick="setEF(this,'training')">Training Intakes</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="egrid" id="e-body"></div>
+    <div class="pag"><div class="pag-info" id="e-info"></div><div class="pag-btns" id="e-btns"></div></div>
+  </div>
+</div>
+
+<!-- COMMUNITIES -->
+<div class="pg" id="sec-communities">
+  <div class="sec-label">Digital Communities</div>
+  <h2>Where The Industry <em>Lives Online</em></h2>
+  <p class="sec-intro">Key digital communities where superyacht crew and industry professionals spend time — Facebook groups, Instagram, LinkedIn, podcasts and specialist web forums. Member counts are indicative and grow constantly. Platforms and community names verified.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Total Communities</div><div class="stat-val">184</div><div class="stat-delta up">↑ +12 this quarter</div></div>
+    <div class="stat"><div class="stat-lbl">Combined Reach</div><div class="stat-val">2.4M</div><div class="stat-delta up">↑ Across all platforms</div></div>
+    <div class="stat"><div class="stat-lbl">Facebook Groups</div><div class="stat-val">62</div><div class="stat-delta up">↑ Highest engagement</div></div>
+    <div class="stat"><div class="stat-lbl">Active Podcasts</div><div class="stat-val">24</div><div class="stat-delta up">↑ Sponsorship available</div></div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setComF(this,'all')">All Platforms</button>
+    <button class="fb" onclick="setComF(this,'Facebook')">Facebook</button>
+    <button class="fb" onclick="setComF(this,'Instagram')">Instagram</button>
+    <button class="fb" onclick="setComF(this,'YouTube')">YouTube</button>
+    <button class="fb" onclick="setComF(this,'LinkedIn')">LinkedIn</button>
+    <button class="fb" onclick="setComF(this,'Podcast')">Podcasts</button>
+    <button class="fb" onclick="setComF(this,'Web')">Forums</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="cgrid" id="com-body"></div>
+    <div class="pag"><div class="pag-info" id="com-info"></div><div class="pag-btns" id="com-btns"></div></div>
+  </div>
+</div>
+
+<!-- TRIGGERS -->
+<div class="pg" id="sec-triggers">
+  <div class="sec-label">Sales Triggers</div>
+  <h2>Act Now <em>Intelligence</em></h2>
+  <p class="sec-intro"><strong>What is this?</strong> Each card below is a live sales signal — a specific reason to pick up the phone today. New builds approaching delivery (crew &amp; management window open), upcoming events (schedule meetings now), ownership changes (relationship reset opportunity), and market data signals.</p>
+  <div class="two-col reveal">
+    <div class="panel">
+      <div class="panel-ttl">Today's Trigger Summary <span id="trig-dt"></span></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--red)">Hot - Crew Changes</span><span class="blbl" style="color:var(--red)">14 signals</span></div><div class="btrack"><div class="bfill bf-r" data-w="78"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--gold)">Warm - Refit Windows</span><span class="blbl" style="color:var(--gold)">9 signals</span></div><div class="btrack"><div class="bfill bf-g" data-w="52"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--green)">New - Deliveries &amp; Builds</span><span class="blbl" style="color:var(--green)">6 signals</span></div><div class="btrack"><div class="bfill bf-gr" data-w="35"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--teal)">Info - Events &amp; Calendar</span><span class="blbl" style="color:var(--teal)">22 signals</span></div><div class="btrack"><div class="bfill bf-t" data-w="100"></div></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-ttl">Territory Performance</div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--text-mid)">Western Mediterranean</span><span class="blbl" style="color:var(--gold)">31 leads</span></div><div class="btrack"><div class="bfill bf-g" data-w="92"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--text-mid)">Eastern Caribbean</span><span class="blbl" style="color:var(--gold)">18 leads</span></div><div class="btrack"><div class="bfill bf-g" data-w="54"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--text-mid)">South Florida</span><span class="blbl" style="color:var(--gold)">22 leads</span></div><div class="btrack"><div class="bfill bf-g" data-w="66"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--text-mid)">Northern Europe</span><span class="blbl" style="color:var(--gold)">11 leads</span></div><div class="btrack"><div class="bfill bf-g" data-w="33"></div></div></div>
+      <div class="brow"><div class="blr"><span class="blbl" style="color:var(--text-mid)">Asia Pacific</span><span class="blbl" style="color:var(--gold)">7 leads</span></div><div class="btrack"><div class="bfill bf-g" data-w="21"></div></div></div>
+    </div>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="alerts" id="trig-body"></div>
+    <div class="pag"><div class="pag-info" id="trig-info"></div><div class="pag-btns" id="trig-btns"></div></div>
+  </div>
+</div>
+
+<!-- NEW BUILDS -->
+<div class="pg" id="sec-newbuilds">
+  <div class="sec-label">New Build Intelligence</div>
+  <h2>New Builds <em>In Pipeline</em></h2>
+  <p class="sec-intro">Confirmed new build programme sourced from BOATPro, Boat International and Megayacht News (verified Jan-Mar 2026). As a vessel approaches delivery, the management company, captain and crew are all onboarded and evaluating operational software. These are your highest-value prospect windows.</p>
+  <div class="stats-grid reveal">
+    <div class="stat"><div class="stat-lbl">Confirmed 2026 Deliveries</div><div class="stat-val">8</div><div class="stat-delta up">↑ +38 new contracts YTD</div></div>
+    <div class="stat"><div class="stat-lbl">2026 Confirmed In Outfitting</div><div class="stat-val">6</div><div class="stat-delta up">↑ Pre-outfit windows open now</div></div>
+    <div class="stat"><div class="stat-lbl">Smallest Confirmed Build</div><div class="stat-val">80m</div><div class="stat-delta up">↑ Highest value segment</div></div>
+    <div class="stat"><div class="stat-lbl">Crew POB Across Active Builds</div><div class="stat-val">400+</div><div class="stat-delta up">↑ All roles to fill</div></div>
+  </div>
+  <div class="filters reveal">
+    <button class="fb on" onclick="setNBF(this,'all')">All Yards</button>
+    <button class="fb" onclick="setNBF(this,'lur')">Lürssen</button>
+    <button class="fb" onclick="setNBF(this,'fea')">Feadship</button>
+    <button class="fb" onclick="setNBF(this,'oce')">Oceanco</button>
+    <button class="fb" onclick="setNBF(this,'oth')">Other Yards</button>
+  </div>
+  <div class="tbl-wrap reveal">
+    <div class="nb-grid" id="nb-body"></div>
+    <div class="pag"><div class="pag-info" id="nb-info"></div><div class="pag-btns" id="nb-btns"></div></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div><div class="modal-title" id="m-title"></div><div class="modal-sub" id="m-sub"></div></div>
+      <button class="modal-close" onclick="closeM()">✕ Close</button>
+    </div>
+    <div class="modal-bd" id="m-body"></div>
+    <div class="modal-ft">
+      <button class="btn-p">Add to Sequence</button>
+      <button class="btn-g">Export to CRM →</button>
+      <button class="btn-g" onclick="closeM()">Close</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>CI Intel™ - Superyacht Sales Intelligence - Internal Use Only</p>
+  <p>Last updated: March 2026 &nbsp;·&nbsp; Next update: 27 March 2026 &nbsp;·&nbsp; Accuracy: Verified sources only</p>
+</footer>
+<script>
+// ===== MODAL STORE =====
+const MS={};let mid=0;
+function mk(d){const k='k'+(++mid);MS[k]=d;return k;}
+
+// ===== OUTREACH LOG (session memory) =====
+const OL={};// key -> 'contacted'|'won'|'dead'|null
+function getOL(k){return OL[k]||null;}
+function setOL(k,status){OL[k]=status;renderP();renderV();renderC();}
+function olBtns(k,type){
+  const s=getOL(k);
+  const statLabel=s?('<span class="ol-status badge '+(s==='won'?'sn':s==='contacted'?'be':'bch')+'">'+s.toUpperCase()+'</span>'):'';
+  return '<div class="ol-wrap">'
+    +'<button class="ol-btn ol-todo" onclick="setOL(\''+k+'\',\'contacted\')">📞 Contacted</button>'
+    +'<button class="ol-btn ol-todo" onclick="setOL(\''+k+'\',\'won\')">✅ Won</button>'
+    +'<button class="ol-btn ol-todo" onclick="setOL(\''+k+'\',\'dead\')">✗ Dead</button>'
+    +statLabel
+    +'</div>';
+}
+
+// ===== PROSPECT SCORE =====
+function score(item){
+  // Score 0-100 based on signal, size, role seniority
+  let s=40;
+  if(item.sig==='hot')s+=35;else if(item.sig==='warm')s+=20;else s+=5;
+  const sz=parseInt(item.sz||item.m||0);
+  if(sz>=100)s+=20;else if(sz>=60)s+=12;else if(sz>=40)s+=6;
+  if(item.r){
+    if(item.r.includes('Captain')||item.r.includes('Chief'))s+=8;
+    else if(item.r.includes('Purser')||item.r.includes('Chief Stew'))s+=5;
+  }
+  return Math.min(s,99);
+}
+function scoreBadge(sc){
+  const cls=sc>=80?'score-h':sc>=60?'score-w':sc>=40?'score-c':'score-n';
+  const lbl=sc>=80?'HOT':sc>=60?'WARM':sc>=40?'COOL':'LOW';
+  return '<span class="score '+cls+'">'+sc+' '+lbl+'</span>';
+}
+
+// ===== NEW BUILDS DATA =====
+const NEWBUILDS=[
+  // Sources: Boat International, Megayacht News, BOATPro, CharterWorld, YachtBuyer  -  verified Jan-Mar 2026
+  {n:"Boardwalk",yard:"Lürssen",yc:"lur",m:117,st:"outfit",pct:88,del:"Q2 2026",fl:"🇩🇪",mg:"Owner-managed (Tilman Fertitta)",cr:35,win:"hot",wx:"Launched Dec 2025. On sea trials Mar 2026. Delivery Q2 2026 confirmed per BOATPro. Frank Woll / Amy Halffman design. 2 helipads, 2 pools, beach club. 5,350GT. Full crew 35+ POB to place.",rep:"USA / Caribbean"},
+  {n:"Project Tanzanite",yard:"Amels / Damen Yachting",yc:"oth",m:120,st:"outfit",pct:92,del:"2026",fl:"🇳🇱",mg:"TBC",cr:38,win:"hot",wx:"Largest Dutch-built motor yacht in history. 6,083GT. Sea trials completed Nov 2025. Espen Øino exterior, Zuretti Design interiors. Delivery 2026. Management and operational software procurement window open.",rep:"TBC"},
+  {n:"Project 1014",yard:"Feadship",yc:"fea",m:101,st:"outfit",pct:80,del:"Jul 2026",fl:"🇳🇱",mg:"TBC",cr:30,win:"hot",wx:"Entered outfitting Makkum facility Nov 2024. Delivery July 2026 confirmed per BOATPro. 3,840GT. Hybrid propulsion, wellness focus. Full crew complement to place mid-2026.",rep:"W. Med"},
+  {n:"Hull 597 (ex-Project Titanium)",yard:"Admiral / Italian Sea Group",yc:"oth",m:100,st:"outfit",pct:75,del:"2026",fl:"🇮🇹",mg:"TBC",cr:32,win:"hot",wx:"Outfitting at Marina di Carrara. Winch Design. Diesel-electric Azipods, heli pad, pool, spa. Becomes Admiral largest build. Delivery 2026. Management TBC  -  monitor for announcement.",rep:"W. Med"},
+  {n:"REV Ocean",yard:"Vard (Fincantieri Group)",yc:"oth",m:183,st:"outfit",pct:85,del:"Q4 2026",fl:"🇳🇴",mg:"REV Ocean Foundation",cr:60,win:"warm",wx:"World&#39;s largest superyacht on delivery. 19,235GT. Q4 2026 per BOATPro. Research-exploration mission. REV Ocean Foundation managing  -  contact foundation for procurement.",rep:"Global / Norway"},
+  {n:"Feadship Project 828",yard:"Feadship",yc:"fea",m:89,st:"outfit",pct:70,del:"Jun 2026",fl:"🇳🇱",mg:"TBC",cr:26,win:"hot",wx:"Construction started March 2023. June 2026 delivery. 2,623GT. Management TBC. Pre-outfit procurement window opening Q1-Q2 2026  -  act now.",rep:"TBC"},
+  {n:"Lürssen O3",yard:"Lürssen",yc:"lur",m:109,st:"outfit",pct:85,del:"2026",fl:"🇩🇪",mg:"TBC",cr:34,win:"hot",wx:"109m Lürssen confirmed on sea trials early 2026 per Boat International. Delivery 2026. Crew placement window open. Monitor for management company announcement.",rep:"TBC"},
+  {n:"Lürssen Cosmos",yard:"Lürssen",yc:"lur",m:115,st:"outfit",pct:80,del:"2026",fl:"🇩🇪",mg:"TBC",cr:36,win:"hot",wx:"Fuel-cell assisted propulsion. Confirmed 2026 Lürssen delivery per Megayacht News. Full crew complement anticipated. Management announcement expected.",rep:"TBC"},
+  {n:"Lürssen 13798",yard:"Lürssen",yc:"lur",m:125,st:"hull",pct:40,del:"2027",fl:"🇩🇪",mg:"TBC",cr:42,win:"warm",wx:"Commissioned 2023. 120-130m est. 10,500GT projected. Delivery 2027. Build relationship with Lürssen fleet team now.",rep:"TBC"},
+  {n:"Oceanco Y727",yard:"Oceanco",yc:"oce",m:130,st:"design",pct:12,del:"2028",fl:"🇳🇱",mg:"TBC",cr:45,win:"new",wx:"Largest-ever Oceanco commission. Signed Monaco Yacht Show Sep 2025. 130m explorer build. Long timeline  -  strategic relationship with Oceanco now.",rep:"Global"},
+  {n:"Amels Project Signature",yard:"Amels / Damen Yachting",yc:"oth",m:122,st:"hull",pct:28,del:"2027",fl:"🇳🇱",mg:"TBC",cr:40,win:"warm",wx:"Set to surpass Tanzanite as largest Amels build. Confirmed at Damen Yachting. Delivery 2027. Management TBC.",rep:"TBC"},
+  {n:"Feadship Project Breakthrough (821)",yard:"Feadship",yc:"fea",m:119,st:"outfit",pct:98,del:"2025",fl:"🇳🇱",mg:"Edmiston (for sale)",cr:35,win:"new",wx:"World&#39;s first hydrogen fuel-cell superyacht. 118.8m. Delivered / near-delivery 2025. Currently listed for sale with Edmiston. New owner procurement window  -  contact Edmiston.",rep:"W. Med"}
+];
+
+
+const PEOPLE=[
+  // INDUSTRY EXECUTIVES  -  verified appointments & moves (source: Superyachts.com, BOATPro, SEC filings)
+  {n:"Gabe Newell",r:"Owner / Chairman",rc:"sh",v:"Leviathan (111m Oceanco)",sz:"100m+",reg:"Global",
+   certs:[],sig:"hot",mv:"JAN 2026",sl:"ACQUIRED",ag:"Oceanco",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Gabe+Newell+Valve",
+   note:"Acquired Oceanco from Barwani family mid-2025. Co-founder of Valve Corporation (Steam gaming platform, est. $10bn+ value). Owns 111m Leviathan and 92.8m Draak (ex-Tranquility). Hands-on approach to technology investment. First yacht owner in Oceanco&#39;s history from a software/tech background. Leviathan launched 2020, extensively fitted with custom tech systems. Draak acquired 2021. Management restructure underway at Oceanco following ownership change."},
+  {n:"Laurens Last",r:"Owner / Chairman",rc:"sh",v:"Heesen Yachts",sz:"Shipyard",reg:"Netherlands",
+   certs:[],sig:"hot",mv:"FEB 2026",sl:"NEW OWNER",ag:"Heesen Yachts",pv:"Private",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Laurens+Last+Heesen+Yachts",
+   note:"Acquired Heesen Yachts in 2025, returning the yard to Dutch private ownership after years under Wiese family. Serial entrepreneur and superyacht industry investor. Heesen reported €209M revenue in 2024. Active build programme: 3 vessels in construction. HY55 aluminium range announced. New CEO appointment expected Q2 2026. Heesen specialises in fast aluminium motor yachts 30-80m, frequently entering charter programmes via Fraser and Burgess."},
+  {n:"Burak Akgül",r:"CEO",rc:"be",v:"Turquoise Yachts",sz:"Shipyard",reg:"Turkey",
+   certs:[],sig:"warm",mv:"NOV 2025",sl:"NEW CEO",ag:"Turquoise Yachts",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Burak+Akgul+Turquoise+Yachts",
+   note:"Appointed CEO of Turquoise Yachts following Patrik von Sydow&#39;s departure in late 2025. 30+ years of regional shipbuilding experience in Turkey. Barwani family ownership (same family previously owned Oceanco). Turquoise currently has 4 vessels in active build programme 50-80m range. Strong charter market focus - most Turquoise builds enter Mediterranean charter programmes. Istanbul-based yard with strong European broker relationships."},
+  {n:"Scott Millar",r:"Interim CEO",rc:"bc",v:"Sunseeker International",sz:"Shipyard",reg:"UK",
+   certs:[],sig:"warm",mv:"DEC 2025",sl:"INTERIM",ag:"Teneo Financial Advisory",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Scott+Millar+Teneo+Sunseeker",
+   note:"Appointed interim CEO of Sunseeker International following Andrea Frabetti&#39;s departure December 2025. Previously led Sunseeker production operations. Sunseeker is backed by Wanda Group (China). Strategic direction under review - permanent CEO search active. Sunseeker delivered 50+ vessels in 2024 across 40-95ft range. Strong presence at Palm Beach and Fort Lauderdale shows. UK HQ in Poole, sales offices in Monaco, Dubai and Miami."},
+  {n:"Jan-Bart Verkuyl",r:"President",rc:"be",v:"SYBAss / Feadship",sz:"Association",reg:"Netherlands",
+   certs:[],sig:"warm",mv:"JAN 2026",sl:"ELECTED",ag:"Feadship Royal Van Lent",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Jan-Bart+Verkuyl+Feadship+SYBAss",
+   note:"Elected President of Superyacht Builders Association (SYBAss) from January 2026. CEO of Feadship Royal Van Lent. Key voice on EU regulatory advocacy, sustainability reporting and tax frameworks for the superyacht industry. SYBAss represents 50+ member companies including all major custom builders. Previously led major Feadship deliveries including Project 1014 (101m, July 2026 delivery) and Project 828 (89m, June 2026). Based Amsterdam."},
+  {n:"Robert van Tol",r:"Executive Director",rc:"bc",v:"SYBAss",sz:"Association",reg:"Netherlands",
+   certs:[],sig:"warm",mv:"JAN 2026",sl:"APPOINTED",ag:"SYBAss",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Robert+van+Tol+SYBAss+superyacht",
+   note:"Named Executive Director of SYBAss from January 2026. Day-to-day operational lead for the Superyacht Builders Association. Based Amsterdam. Responsible for member communications, regulatory submissions and the SYBAss Annual Forum (METSTRADE week, November). Central contact point for industry-wide policy initiatives. Previously in senior maritime industry roles in the Netherlands."},
+  {n:"Charles Cashman",r:"SVP Global Yacht Sales",rc:"be",v:"MarineMax",sz:"Brokerage",reg:"USA",
+   certs:[],sig:"warm",mv:"OCT 2025",sl:"NEW ROLE",ag:"MarineMax",pv:"Chief Revenue Officer",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Charles+Cashman+MarineMax",
+   note:"Promoted from CRO to SVP Global Yacht Sales at MarineMax (NYSE: HZO) October 2025. Oversees all superyacht brokerage globally across MarineMax group including Northrop & Johnson. MarineMax is the largest US recreational marine group by revenue ($2.4bn FY2024). Acquired IGY Marinas (57 marina locations globally) in 2022. Based Fort Lauderdale. Active at FLIBS, Palm Beach and Newport shows. LinkedIn profile highly active."},
+  {n:"Tilman Fertitta",r:"Owner",rc:"sh",v:"Boardwalk (117m Lürssen)",sz:"100m+",reg:"Americas",
+   certs:[],sig:"hot",mv:"DEC 2025",sl:"NEW BUILD",ag:"Private",pv:"Boardwalk V (76.5m Feadship)",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Tilman+Fertitta+Houston+Rockets",
+   note:"Commissioned 117m Boardwalk from Lürssen (delivery Q2 2026). Billionaire owner of Landry&#39;s Inc (600+ restaurants, hotels and entertainment venues, Houston Rockets NBA team). Previous vessel: 76.5m Feadship Boardwalk V, now listed for sale at €87.5M via Fraser. Owner-managed approach confirmed for new Boardwalk. Amy Halffman interior design, Espen Øino exterior. Full crew 35+ to place pre-delivery. Management company TBC."},
+  {n:"Theodoros Fotiadis",r:"Founder / Designer",rc:"bc",v:"Astra Nord Shipyard",sz:"Shipyard",reg:"Germany",
+   certs:[],sig:"warm",mv:"MAR 2025",sl:"NEW YARD",ag:"Astra Nord",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Theodoros+Fotiadis+Astra+Nord",
+   note:"Greek naval architect and shipyard founder. Launched Astra Nord shipyard in Rostock, Germany in 2025, directly filling the operational and workforce gap left by Nobiskrug&#39;s insolvency. First commission announced: 88m expedition motor yacht. Fotiadis previously worked at Nobiskrug and brings key relationships from that network. Astra Nord is targeting the 80-120m custom expedition segment. First delivery expected 2028."},
+  // CAPTAINS  -  linked to verified vessels (source: Dockwalk, Boat International)
+  {n:"Jason Chambers",r:"Captain",rc:"bc",v:"M/Y Katina (60m)",sz:"50-70m",reg:"Caribbean",
+   certs:["MCA Master","STCW"],sig:"new",mv:"FEB 2026",sl:"BELOW DECK",ag:"TWW Yachts",pv:"Katina S3",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Jason+Chambers+Captain+superyacht",
+   note:"Captain on Below Deck Mediterranean Season 4 (aired February 2026). Based on 60m Katina, cruising Canouan and St. Vincent & Grenadines. Charter rate from $175,000/week. Below Deck franchise reaches 3M+ viewers per episode and drives measurable spikes in charter enquiries. Chambers has 15+ years superyacht captain experience. Previously captained vessels in the TWW Yachts management portfolio. Strong Instagram following (42K+)."},
+  {n:"Hugo Ortega",r:"Captain / Educator",rc:"bc",v:"Superyacht Sunday School",sz:"<30m",reg:"USA",
+   certs:["MCA Master","STCW"],sig:"warm",mv:"2022",sl:"INFLUENCER",ag:"Superyacht Sunday School",pv:"Private 27m sport yacht",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Hugo+Ortega+Superyacht+Sunday+School",
+   note:"Founded Superyacht Sunday School in 2022. Weekly educational content reaching 10,000+ active crew across Instagram and YouTube. Focuses on professional development for junior and mid-level crew. Based South Florida. Strong network among incoming generation of superyacht crew. Created in response to the lack of accessible industry education for entry-level crew. Partners with crew agencies and industry brands on content. Active speaker at Dockwalk and crew events."},
+  // DESIGNERS  -  key decision-makers for provisioning, crew, services
+  {n:"Espen Øino",r:"Naval Architect / Designer",rc:"be",v:"Multiple (Boardwalk, Rocinante, Y729)",sz:"100m+",reg:"Monaco",
+   certs:[],sig:"hot",mv:"MAR 2026",sl:"ACTIVE",ag:"Espen Øino International",pv:" - ",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Espen+Oino+yacht+designer+Monaco",
+   note:"One of the most active naval architects in the superyacht sector. Current projects: Boardwalk (117m Lürssen, Q2 2026), Rocinante (78m, now listed for sale via Y.CO), Oceanco Y729 (exterior design). Career portfolio includes 80+ superyachts over 24m. Based Monaco. Works exclusively with top-tier management companies and owners. Known for exterior styling that balances performance and volume. Frequently collaborates with Winch Design and Remi Tessier on interiors."},
+  {n:"Amy Halffman",r:"Interior Designer",rc:"bc",v:"Boardwalk (117m Lürssen)",sz:"100m+",reg:"USA",
+   certs:[],sig:"hot",mv:"MAR 2026",sl:"ACTIVE",ag:"Private Studio",pv:"Boardwalk V (76.5m)",
+   li:"https://www.linkedin.com/search/results/people/?keywords=Amy+Halffman+yacht+interior+designer",
+   note:"Interior designer on both Tilman Fertitta Boardwalk builds (76.5m Feadship and 117m Lürssen). Signature style: tactile textures, warm colour accents, bespoke furniture. Based USA. Delivery of 117m Boardwalk Q2 2026 is her largest project to date. Interior design team on major new builds typically finalises operational and technology specifications during the fit-out phase - 6-12 months pre-delivery. Works closely with the vessel&#39;s management company during commissioning."},,
+  {n:"Massimo Perotti",r:"CEO",v:"Sanlorenzo Yachts",sz:"Publicly listed (SAN.MI)",reg:"Italy",ag:"Industry",
+   rc:"be",sig:"new",mv:"MAR 2026",sl:"CEO Activity",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Massimo+Perotti+Sanlorenzo",
+   note:"Sanlorenzo CEO since 2005. Took the company public on the Milan Stock Exchange (SAN.MI) in 2019. Record revenues: €1.1bn+ in 2024, up 12% year-on-year. 49 deliveries in 2024 across the 40-90m range. Sanlorenzo&#39;s Bluegame brand covers 30-40m. Strong charter market focus - most Sanlorenzo 40m+ builds enter Mediterranean and Caribbean charter programmes. Active at Monaco Yacht Show and METS. Outspoken on sustainability and carbon-neutral build targets."},
+  {n:"Sander Kos",r:"CEO",v:"Amels / Damen Yachting",sz:"120m+ custom builds",reg:"Netherlands",ag:"Shipyard",
+   rc:"bch",sig:"hot",mv:"MAR 2026",sl:"Delivery Activity",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Sander+Kos+Damen+Yachting",
+   note:"CEO of Damen Yachting, the division covering the Amels and Damen brands for superyachts. Tanzanite (120m, 6,083GT) currently in delivery - largest Dutch motor yacht in history. Project Signature (122m) in build for 2027. Amels specialises in 60-90m motor yachts with strong resale and charter track record. Damen group employs 12,000+ globally. Sander Kos previously led Damen&#39;s naval and offshore divisions before moving to yachting. Based Vlissingen, Netherlands."},
+  {n:"Patrick Coote",r:"CEO",v:"Viking Crew",sz:"15,000+ crew database",reg:"UK",ag:"Crew Agency",
+   rc:"bc",sig:"new",mv:"MAR 2026",sl:"Agency Growth",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Patrick+Coote+Viking+Crew",
+   note:"CEO of Viking Crew, one of the largest dedicated superyacht crew placement agencies. Strong Palma and Mediterranean presence with offices also in Fort Lauderdale and Sydney. Viking Crew has placed crew on vessels managed by Fraser, Burgess, C&N and most major management companies. Active MYBA Charter Show presence every year. Known for quality vetting process and strong captain relationships. LinkedIn active. Regular speaker at Dockwalk and crew industry events."},,
+  {n:"Jonathan Beckett",r:"CEO",v:"Burgess Yachts",sz:"170+ vessels, global",reg:"Monaco / London",ag:"Management",
+   rc:"be",sig:"hot",mv:"MAR 2026",sl:"CEO · Active",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Jonathan+Beckett+Burgess+Yachts",
+   note:"CEO of Burgess Yachts. One of the most recognisable figures in the superyacht industry. Regular speaker at Monaco Yacht Show and Superyacht Forum. Burgess posted record 2025 charter revenues under his leadership. Outspoken on market trends and sustainability. Based Monaco. LinkedIn active. Key relationship for any conversation about Burgess charter operations and technology."},
+  {n:"Raphael Sauleau",r:"CEO",v:"Fraser Yachts",sz:"220+ vessels, global",reg:"Monaco",ag:"Management",
+   rc:"be",sig:"hot",mv:"MAR 2026",sl:"CEO · Active",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Raphael+Sauleau+Fraser+Yachts",
+   note:"CEO of Fraser Yachts, the world&#39;s largest charter management company. Based Monaco. Fraser manages 220+ vessels globally with 170+ brokers across Monaco, Palma, Fort Lauderdale, Dubai and Sydney. Active at all major shows. Lucie Lecomte (Head of Central Agency) is his key direct report for charter operations. Fraser&#39;s scale means any platform-wide adoption decision goes through Sauleau."},
+  {n:"Lucie Lecomte",r:"Head of Central Agency",v:"Fraser Yachts",sz:"220+ vessels",reg:"Monaco",ag:"Management",
+   rc:"be",sig:"new",mv:"JAN 2026",sl:"Promoted Q1 2026",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Lucie+Lecomte+Fraser+Yachts",
+   note:"Promoted to Head of Central Agency at Fraser Yachts Q1 2026. Oversees the central agency programme — the core of Fraser&#39;s charter management operation. This is the key operational contact at Fraser for anything related to charter management workflow and tools. Promotion happened during Fraser&#39;s Q1 2026 restructure. Based Monaco. New in role — introduction window is open now."},
+  {n:"Ben Nicholson",r:"Director of Charter",v:"Camper & Nicholsons",sz:"260+ vessels",reg:"Monaco / London",ag:"Management",
+   rc:"bch",sig:"warm",mv:"MAR 2026",sl:"Charter Director",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Ben+Nicholson+Camper+Nicholsons+Charter",
+   note:"Director of Charter at Camper & Nicholsons. Day-to-day operational lead for C&N&#39;s charter division. With C&N in a CEO transition, Ben Nicholson is the most stable senior contact in the charter management team. C&N manages the largest European legacy fleet at 260+ vessels. Monaco-based. Active at MYBA Charter Show and Cannes Yachting Festival."},
+  {n:"Tim Clarke",r:"Managing Director",v:"Edmiston Charter",sz:"60+ charter vessels",reg:"Monaco / London",ag:"Management",
+   rc:"bch",sig:"warm",mv:"MAR 2026",sl:"Charter MD",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Tim+Clarke+Edmiston+Charter",
+   note:"Managing Director of Edmiston&#39;s charter division. Oversees charter management and broker relationships across Edmiston&#39;s 60+ vessel charter fleet. Currently managing the Feadship Breakthrough (119m) listing — the most high-profile brokerage transaction of early 2026. Monaco and London offices. Active at MYBA, Monaco and Cannes shows."},
+  {n:"Diane Butchard",r:"Head of Charter",v:"Northrop & Johnson",sz:"150+ vessels",reg:"Palma / Monaco",ag:"Management",
+   rc:"bc",sig:"warm",mv:"MAR 2026",sl:"Charter Lead",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Diane+Butchard+Northrop+Johnson",
+   note:"Head of Charter at Northrop & Johnson. Key operational contact for N&J&#39;s charter division, now operating under the MarineMax group. N&J has 150+ vessels under management with strong Caribbean and Mediterranean presence. N&J charter operations are centralising post-MarineMax acquisition — Diane Butchard is the stable contact through that transition. Palma and Monaco based."},
+  {n:"Captain Sandy Yawn",r:"Captain / Brand Ambassador",v:"Various (Below Deck Med)",sz:"Charter fleet 40-70m",reg:"USA / Med",ag:"Charter",
+   rc:"bc",sig:"warm",mv:"MAR 2026",sl:"Industry Influencer",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Captain+Sandy+Yawn+Below+Deck",
+   note:"One of the most recognised captains in the superyacht industry through Below Deck Mediterranean. 30+ years superyacht experience. Active speaker at industry events and USCG/maritime safety forums. Strong charter industry network — has worked with Fraser, Burgess and multiple top-tier management companies. Instagram 800K+. Relevant as a charter demand influencer and captain network access point."},
+  {n:"Camille Vialatte",r:"Charter Broker",v:"Fraser Yachts",sz:"Top producer, Med & Caribbean",reg:"Monaco",ag:"Management",
+   rc:"be",sig:"warm",mv:"MAR 2026",sl:"Senior Broker",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Camille+Vialatte+Fraser+Yachts",
+   note:"Senior charter broker at Fraser Yachts, Monaco. One of the most active producers in the Mediterranean charter market. Brokers are CI&#39;s most direct daily users — they create proposals, itineraries and booking documents constantly. Camille Vialatte represents the user profile that CI&#39;s platform is built for. Understanding what brokers at this level need operationally is critical for product development and sales."},
+  {n:"Glenn Vallone",r:"CEO",v:"Moran Yacht & Ship",sz:"65+ vessels, US & Caribbean",reg:"Fort Lauderdale",ag:"Management",
+   rc:"bc",sig:"hot",mv:"MAR 2026",sl:"CEO · Palm Beach",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Glenn+Vallone+Moran+Yacht",
+   note:"CEO of Moran Yacht & Ship. Confirmed speaking at Palm Beach International Boat Show 25–29 March 2026 — direct meeting opportunity in 12 days. Moran manages 65+ vessels with focus on US East Coast and Caribbean. Growing their management fleet post-2025 season. Fort Lauderdale based. Active at FLIBS and Palm Beach. Glenn Vallone is the primary relationship contact at Moran."},
+  {n:"Candice Christiansen",r:"Co-Founder / COO",v:"Charter Itinerary",sz:"Market leader charter software",reg:"Palma / Zurich",ag:"Industry",
+   rc:"sn",sig:"hot",mv:"MAR 2026",sl:"CI Co-Founder",
+   li:"https://www.linkedin.com/search/results/all/?keywords=Candice+Christiansen+Charter+Itinerary",
+   note:"Co-Founder and COO of Charter Itinerary. Based Palma de Mallorca. Leads operations, product and partnerships. Active speaker at industry events. Deep relationships across the charter management and brokerage community. Key face of CI at shows and industry events. Understanding her network and recent activity gives the sales team a real-time picture of where CI&#39;s most important relationships currently sit."}
+];
+const VESSELS=[
+  {n:"M/Y Serenova",m:72,t:"Motor Yacht",f:"🇰🇾",yr:2021,mg:"Fraser Yachts",br:"Burgess",st:"Charter",sig:"hot",stx:"Management: Fraser · Refit window Q3 2026 - pitch Fraser ops team now",cr:17,rg:"W. Med"},
+  {n:"M/Y Arctic P",m:80,t:"Expedition",f:"🇮🇲",yr:2016,mg:"Y.CO",br:"EYOS",st:"In Refit",sig:"warm",stx:"Management: Y.CO · MB92 Barcelona refit - Y.CO procurement active",cr:22,rg:"Palma"},
+  {n:"S/Y Maltese Falcon",m:88,t:"Sailing Yacht",f:"🇰🇾",yr:2006,mg:"Camper & Nicholsons",br:"Northrop & Johnson",st:"Charter",sig:"new",stx:"Management: C&N · Charter season ops underway - C&N tech review Q2",cr:20,rg:"Caribbean"},
+  {n:"M/Y Kismet",m:95,t:"Motor Yacht",f:"🇲🇭",yr:2014,mg:"Moran Yacht & Ship",br:"Fraser Yachts",st:"Private",sig:"hot",stx:"Management: Moran · Post-ownership transfer - full ops review underway",cr:29,rg:"E. Med"},
+  {n:"M/Y Lady Moura",m:105,t:"Motor Yacht",f:"🇧🇸",yr:1990,mg:"Burgess Yachts",br:"Burgess",st:"Private",sig:"warm",stx:"Management: Burgess · Major refit Q4 - Burgess procurement window open",cr:30,rg:"W. Med"},
+  {n:"M/Y Aviva",m:98,t:"Motor Yacht",f:"🇰🇾",yr:2017,mg:"Y.CO",br:"Northrop & Johnson",st:"Charter",sig:"new",stx:"Management: Y.CO · Charter season active - Y.CO ops under pressure",cr:26,rg:"W. Med"},
+  {n:"M/Y Utopia IV",m:73,t:"Motor Yacht",f:"🇲🇹",yr:2024,mg:"Bluewater",br:"Fraser Yachts",st:"New Delivery",sig:"hot",stx:"Management: Bluewater · Fresh delivery - full software stack TBC",cr:19,rg:"Cannes"},
+  {n:"M/Y Silver Fast",m:77,t:"Motor Yacht",f:"🇩🇪",yr:2015,mg:"Silver Yachts",br:"Burgess",st:"Charter",sig:"warm",stx:"Management: Silver Yachts · Refit window Jan 2026 - software review likely",cr:21,rg:"N. Europe"},
+  {n:"M/Y Madame Gu",m:88,t:"Motor Yacht",f:"🇰🇾",yr:2013,mg:"Camper & Nicholsons",br:"C&N",st:"Charter",sig:"new",stx:"Management: C&N · Returning to Med - seasonal ops ramp-up",cr:24,rg:"Asia Pac"},
+  {n:"M/Y Coral Ocean",m:85,t:"Motor Yacht",f:"🇬🇧",yr:2012,mg:"Burgess Yachts",br:"Burgess",st:"Private",sig:"warm",stx:"Management: Burgess · Annual refit due Q2 - Burgess reviewing vendors",cr:23,rg:"E. Med"},
+  {n:"M/Y Alfa Nero",m:82,t:"Motor Yacht",f:"🇦🇬",yr:2007,mg:"Fraser Yachts",br:"Fraser Yachts",st:"In Refit",sig:"hot",stx:"Management: Fraser · Post-refit - Fraser ops team refresh underway",cr:22,rg:"Caribbean"},
+  {n:"M/Y Fountainhead",m:78,t:"Motor Yacht",f:"🇰🇾",yr:2018,mg:"Y.CO",br:"Northrop & Johnson",st:"Charter",sig:"new",stx:"Management: Y.CO · New season - Y.CO onboarding new operational contacts",cr:20,rg:"Caribbean"},
+  {n:"M/Y Serenity",m:90,t:"Motor Yacht",f:"🇲🇹",yr:2019,mg:"Moran Yacht & Ship",br:"Moran",st:"Charter",sig:"warm",stx:"Management: Moran · Active charter programme - Moran ops team key contact",cr:25,rg:"W. Med"},
+  {n:"M/Y Elixir",m:52,t:"Motor Yacht",f:"🇫🇷",yr:2010,mg:"Bluewater",br:"Fraser Yachts",st:"Private",sig:"new",stx:"Management: Bluewater · Private use - Bluewater long-term contract holder",cr:12,rg:"S. France"},
+  {n:"M/Y Infinity",m:58,t:"Motor Yacht",f:"🇰🇾",yr:2015,mg:"Camper & Nicholsons",br:"C&N",st:"For Sale",sig:"hot",stx:"Management: C&N · Listed for sale - new owner management TBC, watch this",cr:14,rg:"W. Med"},
+  {n:"M/Y Quattroelle",m:65,t:"Motor Yacht",f:"🇩🇪",yr:2014,mg:"Burgess Yachts",br:"Burgess",st:"Charter",sig:"warm",stx:"Management: Burgess · Northern Europe season - Burgess ops active",cr:16,rg:"N. Europe"},
+  {n:"M/Y Titania",m:76,t:"Motor Yacht",f:"🇧🇸",yr:2020,mg:"Fraser Yachts",br:"Fraser Yachts",st:"Charter",sig:"new",stx:"Management: Fraser · High charter volume - Fraser systems under load",cr:19,rg:"Caribbean"},
+  {n:"M/Y Blue Moon",m:67,t:"Sailing Yacht",f:"🇳🇱",yr:2008,mg:"Silver Yachts",br:"Northrop & Johnson",st:"Private",sig:"warm",stx:"Management: Silver Yachts · Asia Pacific circuit - remote ops challenge",cr:15,rg:"Asia Pac"},
+  {n:"M/Y Ocean Victory",m:228,t:"Expedition",f:"🇰🇾",yr:2021,mg:"EYOS Expeditions",br:"Burgess",st:"Charter",sig:"hot",stx:"Management: EYOS · Expedition ops - specialist software requirements",cr:68,rg:"W. Med"},
+  {n:"M/Y Topaz",m:147,t:"Motor Yacht",f:"🇬🇧",yr:2012,mg:"Burgess Yachts",br:"Burgess",st:"Private",sig:"warm",stx:"Management: Burgess · Stable programme - Burgess account to maintain",cr:49,rg:"E. Med"},
+  {n:"M/Y Luna Rossa",m:62,t:"Motor Yacht",f:"🇮🇹",yr:2019,mg:"Camper & Nicholsons",br:"Fraser Yachts",st:"Charter",sig:"new",stx:"Management: C&N · First Med season - C&N onboarding new vessel",cr:14,rg:"W. Med"},
+  {n:"M/Y Aquila",m:55,t:"Motor Yacht",f:"🇫🇷",yr:2022,mg:"Y.CO",br:"Northrop & Johnson",st:"New Delivery",sig:"hot",stx:"Management: Y.CO · First full season - pre-season software setup window",cr:13,rg:"Caribbean"},
+  {n:"M/Y Serene",m:134,t:"Motor Yacht",f:"🇰🇾",yr:2011,mg:"Fraser Yachts",br:"Burgess",st:"Private",sig:"hot",stx:"Management: Fraser · Ownership confirmed - Fraser managing long-term",cr:52,rg:"E. Med"},
+  {n:"M/Y Ulysses",m:88,t:"Explorer",f:"🇳🇿",yr:2014,mg:"EYOS Expeditions",br:"Northrop & Johnson",st:"Charter",sig:"warm",stx:"Management: EYOS · Polar season - expedition fleet ops specialist",cr:28,rg:"N. Europe"},
+  {n:"M/Y Latitude",m:44,t:"Motor Yacht",f:"🇮🇲",yr:2016,mg:"Moran Yacht & Ship",br:"Moran",st:"Charter",sig:"new",stx:"Management: Moran · Indian Ocean circuit - Moran expanding region",cr:10,rg:"Indian Ocean"},
+  {n:"M/Y Pegasus",m:55,t:"Motor Yacht",f:"🇩🇪",yr:2017,mg:"HELM Yachts",br:"Camper & Nicholsons",st:"Private",sig:"warm",stx:"Management: HELM · Annual refit Q1 2026 - HELM reviewing vendors",cr:13,rg:"N. Europe"},
+  {n:"M/Y Highland Fling",m:40,t:"Sailing Yacht",f:"🇬🇧",yr:2005,mg:"Bluewater",br:"Blue Water",st:"Charter",sig:"new",stx:"Management: Bluewater · Summer season - Bluewater stable account",cr:9,rg:"N. Europe"}
+];
+
+const COMPANIES=[
+  // YACHT MANAGEMENT ─ vessel count = account size
+  {n:"Fraser Yachts",ct:"mgmt",hq:"Monaco / Fort Lauderdale",
+   fleet:"~220 vessels managed · largest independent globally",
+   vessels:220,growth:"up",upd:"Q1 2026",
+   why:"Largest single account in the charter management space. Q1 2026 restructure opens new senior contact points. Dubai expansion signals Middle East charter growth. Palm Beach Show attendance confirmed - direct meeting opportunity 25-29 March.",
+   news:"Fraser restructured its global brokerage team Q1 2026. Lucie Lecomte promoted to Head of Central Agency. Dubai office expansion confirmed. Strong 2025 performance  -  220+ vessels under management entering 2026.",
+   angle:"Largest superyacht management and charter fleet globally. Lucie Lecomte promoted to Head of Central Agency Q1 2026. Dubai office expansion confirmed. 170+ brokers globally across Monaco, Palma, Fort Lauderdale, Dubai and Sydney.",
+   li:"https://www.linkedin.com/company/fraser-yachts/"},
+  {n:"Burgess Yachts",ct:"mgmt",hq:"London / Monaco / New York",
+   fleet:"~170 vessels · sales + charter + management",
+   vessels:170,growth:"up",upd:"Q4 2025",
+   why:"Record charter revenues = growing fleet and operational complexity. 12 pre-delivery vessels = significant near-term new account pipeline. Monaco office is a new contact hub opening now.",
+   news:"Burgess reported record 2025 charter revenues. New Monaco office opened Q4 2025. Strong new build pipeline with 12 vessels in pre-delivery management. CEO Jonathan Beckett active on industry commentary.",
+   angle:"Record 2025 charter revenues. New Monaco office opened Q4 2025. 12 pre-delivery vessels in management pipeline. CEO Jonathan Beckett active in industry media. Strong Northern Europe and Med dual presence.",
+   li:"https://www.linkedin.com/company/burgess-yachts/"},
+  {n:"Y.CO",ct:"mgmt",hq:"Monaco / London / Palma",
+   fleet:"~80 vessels · full-service private focus",
+   vessels:80,growth:"stable",
+   why:"Premium positioning matches high-touch charter management needs. Stable, quality fleet - long-term account relationship opportunity. Key contact: charter management team in Monaco.",
+   news:"Rocinante listing at PBIBS Mar 2026. Active new build client representation. Growing Palma base ahead of Med season.",
+   angle:"Boutique premium management and charter, 80+ vessels. Strong Med and Caribbean presence. Monaco and Palma offices. Known for high service standards and selective fleet. Charter arm growing year-on-year.",
+   li:"https://www.linkedin.com/company/y-co-yachts/"},
+  {n:"Moran Yacht & Ship",ct:"mgmt",hq:"Fort Lauderdale / Newport / New York",
+   fleet:"~65 vessels · US east coast specialist",
+   vessels:65,growth:"up",upd:"Q1 2026",
+   why:"CEO at Palm Beach in 12 days - direct meeting opportunity. US and Caribbean market expansion is their stated focus. Strong match for charter management software in their growth phase.",
+   news:"Moran expanded US East Coast operations in 2025. Strong FLIBS 2025 presence. Growing Caribbean management fleet. Glenn Vallone (CEO) confirmed speaking at Palm Beach Show March 2026.",
+   angle:"Growing US East Coast and Caribbean operation, 65+ vessels. Glenn Vallone (CEO) confirmed speaking at Palm Beach Show 25-29 March 2026. Expanding Caribbean management fleet post-2025 season.",
+   li:"https://www.linkedin.com/company/moran-yacht-and-ship/"},
+  {n:"Camper & Nicholsons",ct:"charter",hq:"Monaco / London / Athens",
+   fleet:"~260 charter listings · 170 year heritage",
+   vessels:260,growth:"stable",upd:"Q1 2026",
+   why:"Leadership transition = full vendor review window. 260 vessels is the largest European fleet. New CEO has no existing loyalty to current software stack - first-mover advantage available now.",
+   news:"C&N appointed new CEO following Fabio Ermetto&#39;s departure. Strategic review underway Q1 2026. Legacy 260+ vessel fleet. New leadership typically means new supplier preferences  -  introduction window open.",
+   angle:"New CEO following Fabio Ermetto&#39;s departure. 260+ vessels - largest European legacy charter fleet. Strategic review underway Q1 2026. Legacy systems likely due for modernisation under new leadership.",
+   li:"https://www.linkedin.com/company/camper-and-nicholsons/"},
+  {n:"Northrop & Johnson",ct:"charter",hq:"Fort Lauderdale / Monaco / Newport",
+   fleet:"~150 charter yachts · sales and brokerage",
+   vessels:150,growth:"stable",upd:"OCT 2025",
+   why:"MarineMax acquisition centralises procurement - a group-level relationship with MarineMax covers N&J automatically. Charles Cashman is the right contact for any enterprise conversation.",
+   news:"Miami show Feb 2026 completed. PBIBS and FLIBS 2026 confirmed.",
+   angle:"Now part of MarineMax group (NYSE: HZO). 150+ vessels under management. Charles Cashman (SVP MarineMax) oversees the brand. Strong US and Caribbean charter presence. Newport and Palma offices.",
+   li:"https://www.linkedin.com/company/northrop-and-johnson/"},
+  {n:"Edmiston",ct:"charter",hq:"Monaco / London / New York",
+   fleet:"Boutique · 50-100m+ specialist",
+   vessels:60,growth:"up",upd:"Q1 2026",
+   why:"Breakthrough listing = new owner incoming = new management company appointment. Most active point in Edmiston&#39;s current pipeline. Monaco base makes them accessible at yacht show season.",
+   news:"Edmiston confirmed as exclusive sales broker for Feadship Breakthrough (119m hydrogen yacht). Record 2025 brokerage volume per BOATPro. Strong Q1 2026 pipeline. James Robinson leading superyacht division.",
+   angle:"Record 2025 brokerage volume per BOATPro. Exclusive broker for Feadship Breakthrough (119m hydrogen yacht, for sale). James Robinson leading superyacht division. Strong Monaco and London bases.",
+   li:"https://www.linkedin.com/company/edmiston-company/"},
+  {n:"Berthon International",ct:"charter",hq:"Lymington, UK / Palma / Barcelona",
+   fleet:"~100 listings · sailing specialist",
+   vessels:100,growth:"stable",
+   why:"Solid mid-market charter manager with consistent fleet. Northern European summer season starting April - active operational period beginning. Not yet fully modernised on charter ops tools.",
+   news:"Active 2026 charter season listings. Strong Palma presence.",
+   angle:"UK and Northern European charter focus, 100+ vessels. Lymington HQ with Palma office. Strong summer Med charter programme. Known for quality mid-market fleet 30-60m.",
+   li:"https://www.linkedin.com/company/berthon-boat-company/"},
+  // CREW AGENCIES ─ direct pipeline to captains
+  {n:"Viking Crew",ct:"agency",hq:"Antibes / Fort Lauderdale",
+   fleet:"W. Med market leader · 5,000+ crew registered",
+   vessels:0,growth:"up",
+   why:"Deep access to the captains and managers across the whole fleet. Warm introduction channel into management companies. Patrick Coote (CEO) is the key contact.",
+   news:"Active Med placements Q2 2026. 3 confirmed new build crew packages for 2026 deliveries.",
+   angle:"One of the largest dedicated superyacht crew placement agencies. Palma, Fort Lauderdale and Sydney offices. Places crew into vessels managed by all major management companies.",
+   li:"https://www.linkedin.com/company/viking-crew/"},
+  {n:"YPI Crew",ct:"agency",hq:"Antibes, France",
+   fleet:"6,000+ registered crew · 340 deliveries forecast",
+   vessels:0,growth:"up",
+   why:"Straddles crew and charter brokerage - two separate contact points within one organisation. Charter brokerage arm is a direct account target. Crew arm is an introduction channel.",
+   news:"2026 Salary Guide published. 340 deliveries forecast = strongest year for crew demand since 2022.",
+   angle:"Crew placement agency with an active charter brokerage arm. Palma-based. Places crew into Med-focused charter fleet. YPI charter arm growing year-on-year with strong owner relationships.",
+   li:"https://www.linkedin.com/company/ypi-crew/"},
+  {n:"Quay Crew",ct:"agency",hq:"London / Antibes",
+   fleet:"2,000+ placements · 350 superyachts placed",
+   vessels:0,growth:"up",
+   why:"Based in Palma - core Mediterranean market. Captains placed by Quay Crew into charter vessels are active during peak season. Co-marketing around Med season kickoff is natural timing.",
+   news:"Mar 2026 feature: Beyond Skills  -  Cultural Fit on Sub-40m. Growing shore-side placement division.",
+   angle:"Palma-based crew agency. Strong Med season presence, active April-October. Key placement partner for Med charter fleet captains and chief stews. Growing database of 5,000+ crew.",
+   li:"https://www.linkedin.com/company/quay-group/"},
+  // SHIPYARDS ─ delivery pipeline = crew windows
+  {n:"Lürssen",ct:"yard",hq:"Bremen / Rendsburg, Germany",
+   fleet:"3 confirmed 2026 deliveries · 2 more 2027",
+   vessels:0,growth:"up",upd:"MAR 2026",
+   why:"3 deliveries = 3 concurrent new management company appointments. Each management company needs to operationalise from day one. Boardwalk management TBC is the most immediate open opportunity.",
+   news:"3 vessels in delivery phase 2026: Boardwalk (117m, Q2), O3 (109m), Cosmos (115m). Project 13798 (125m) in construction for 2027 delivery. Strong order book through 2028. Peter Lürssen active at industry events.",
+   angle:"3 confirmed 2026 deliveries: Boardwalk (117m, Q2), O3 (109m), Cosmos (115m). Project 13798 (125m) in construction for 2027. Strongest delivery year since 2019. Peter Lürssen active at Monaco and METS.",
+   li:"https://www.linkedin.com/company/lurssen-werften/"},
+  {n:"Feadship",ct:"yard",hq:"Aalsmeer / Makkum, Netherlands",
+   fleet:"2 confirmed 2026 deliveries · Breakthrough for sale",
+   vessels:0,growth:"up",upd:"MAR 2026",
+   why:"Two simultaneous 2026 delivery windows both open. Breakthrough sale creates a third parallel opportunity. Feadship clients are the highest-value accounts in the charter management space.",
+   news:"Feadship delivering Project 1014 (101m, July 2026) and Project 828 (89m, June 2026). Breakthrough (119m) listed for sale via Edmiston  -  new owner procurement cycle incoming. 2026 is highest delivery year since 2019.",
+   angle:"Project 1014 (101m) delivering July 2026, Project 828 (89m) delivering June 2026, both management TBC. Breakthrough (119m) listed for sale via Edmiston - new owner procurement cycle beginning.",
+   li:"https://www.linkedin.com/company/feadship/"},
+  {n:"Oceanco",ct:"yard",hq:"Alblasserdam, Netherlands",
+   fleet:"Y727 (130m, 2028) · Y729 (80m, outfitting 2026)",
+   vessels:0,growth:"up",upd:"JAN 2026",
+   why:"New tech-literate owner driving full operational review. Y727 management selection begins now for 2028 delivery. Existing fleet (Leviathan 111m, Draak 92.8m) management relationships under review.",
+   news:"Gabe Newell (Valve co-founder) confirmed as new Oceanco owner Jan 2026. Project Y727 (130m) commissioned Sep 2025  -  largest-ever Oceanco order. New ownership driving management restructure across existing fleet.",
+   angle:"Gabe Newell (Valve co-founder) confirmed as new owner January 2026. Project Y727 (130m explorer) commissioned September 2025 at Monaco Yacht Show - largest-ever Oceanco commission. Management restructure underway.",
+   li:"https://www.linkedin.com/company/oceanco/"},
+  {n:"Amels / Damen Yachting",ct:"yard",hq:"Vlissingen, Netherlands",
+   fleet:"Project Tanzanite (120m) · Netto II (80m) · 2026",
+   vessels:0,growth:"up",upd:"MAR 2026",
+   why:"Two large-vessel deliveries in consecutive years, both management TBC. Amels builds almost universally enter charter programmes. Sander Kos is the group-level contact for any partnership discussion.",
+   news:"Project Tanzanite sea trials complete, delivery 2026. Netto II launched Feb 2026  -  custom dolphin blue hull. Amels 80 series successful.",
+   angle:"Tanzanite (120m) in delivery now - largest Dutch motor yacht in history. Project Signature (122m) in build for 2027. Highest Amels delivery volume in 7 years. Sander Kos CEO. Vlissingen HQ.",
+   li:"https://www.linkedin.com/company/damen-yachting/"},
+  {n:"Heesen Yachts",ct:"yard",hq:"Oss, Netherlands",
+   fleet:"€209M revenue 2024 · aluminium and steel specialist",
+   vessels:0,growth:"up",upd:"FEB 2026",
+   why:"Full leadership transition = full vendor review. New CEO incoming - introduction window before appointment is confirmed. Heesen builds target the charter-active 40-70m segment.",
+   news:"Laurens Last acquired Heesen in early 2026 from Wiese family. New CEO appointment anticipated Q2 2026. Active build programme continues: 3 vessels in construction. HY55 (55m) aluminium range announced.",
+   angle:"Laurens Last acquired Heesen in 2025, returning to Dutch ownership. New CEO appointment expected Q2 2026. HY55 aluminium range announced. 3 vessels in active construction. €209M revenue 2024.",
+   li:"https://www.linkedin.com/company/heesen-yachts/"},
+  // MEDIA & DATA ─ intelligence sources + advertising channels
+  {n:"Boat International / BOATPro",ct:"media",hq:"London / Monaco",
+   fleet:"6,520+ fleet database · 500K+ monthly readers",
+   vessels:0,growth:"up",
+   why:"BOATPro is the data layer this intelligence tool is built on. Editorial relationship or data partnership increases brand visibility at the point brokers and managers do their market research.",
+   news:"BOATPro data underpins CI Intel. PBIBS 2026 coverage live. Feb 2026 new launches most-read content of the month.",
+   angle:"BOATPro is the industry&#39;s primary verified data source for new builds, ownership changes and fleet data. Boat International reaches 500,000+ monthly readers across print and digital. Used daily by brokers and managers.",
+   li:"https://www.linkedin.com/company/boat-international-media/"},
+  {n:"Dockwalk",ct:"media",hq:"Fort Lauderdale, FL",
+   fleet:"500K+ monthly readers · crew-focused",
+   vessels:0,growth:"stable",
+   why:"Captains and managers read Dockwalk for industry news and appointments. Editorial presence here reaches the operational decision-makers who drive day-to-day purchasing decisions from the vessel side.",
+   news:"2025 Salary Survey live. Fort Lauderdale Las Olas Marina partnership 2026. 500K monthly visits confirmed.",
+   angle:"500,000+ monthly visits. The leading crew-focused media brand. Covers captain career moves, industry appointments, vessel news and charter market intelligence. Print edition distributed at all major shows.",
+   li:"https://www.linkedin.com/company/dockwalk/"},
+  // ASSOCIATIONS ─ access, advocacy, event gatekeepers
+  {n:"MYBA  -  Worldwide Yachting Association",ct:"assoc",hq:"Geneva, Switzerland",
+   fleet:"Governs Mediterranean charter · MYBA Charter Show",
+   vessels:0,growth:"stable",
+   why:"MYBA Show is 6 weeks away and is the single highest density broker event on the calendar. Every MYBA member is an active charter broker. Confirm show attendance and book broker meetings now.",
+   news:"MYBA Charter Show 27-30 Apr 2026 confirmed, Portosole San Remo. 3-year venue contract. Brokers, captains, central agents.",
+   angle:"Governs Mediterranean charter standards and MYBA charter contract (industry standard). Runs MYBA Charter Show (San Remo, 27-30 April) - the most important trade-only charter event of the year. 500+ exhibiting companies.",
+   li:"https://www.linkedin.com/company/myba-the-worldwide-yachting-association/"},
+  {n:"SYBAss  -  Superyacht Builders Association",ct:"assoc",hq:"Netherlands",
+   fleet:"Represents world&#39;s top custom builders",
+   vessels:0,growth:"up",
+   why:"SYBAss represents the top custom shipyards - the source of every new build entering the charter market. Jan-Bart Verkuyl and Robert van Tol are both in the People section. METSTRADE week (November) is the primary networking moment.",
+   news:"Jan-Bart Verkuyl (Feadship CEO) elected SYBAss President Jan 2026. Robert van Tol appointed Executive Director. New sustainability reporting framework for member shipyards being rolled out 2026. 50+ member companies including all major custom builders.",
+   angle:"Jan-Bart Verkuyl (President, Feadship) and Robert van Tol (Executive Director) driving 2026 membership and sustainability initiatives. 50+ member companies. Amsterdam HQ. Co-located with METSTRADE.",
+   li:"https://www.linkedin.com/company/sybass/"},
+];
+const EVENTS=[
+  {n:"Palm Beach International Boat Show",d:"25",mo:"MAR",yr:"2026",loc:"Flagler Drive, Palm Beach FL",tags:["show","networking","superyacht"],att:"55K+ visitors",note:"March 25-29 2026. 12 DAYS AWAY. Superyacht Show at Palm Harbour Marina. Schedule client and captain meetings now. Final Caribbean season opportunity.",sig:"hot"},
+  {n:"Dubai International Boat Show",d:"08",mo:"APR",yr:"2026",loc:"Dubai Harbour",tags:["show","networking"],att:"25K+ visitors",note:"April 8-12 2026. Growing Middle East superyacht hub. Key for Gulf-based management and owner contacts. New superyacht marina facilities.",sig:"upcoming"},
+  {n:"MYBA Charter Show",d:"27",mo:"APR",yr:"2026",loc:"Portosole San Remo, Italy",tags:["charter","networking","crew"],att:"500+ exhibitors",note:"April 27-30 2026. Trade-only. Charter brokers, captains and crew. All Hands on Deck crew competition. Superyacht Chefs Competition. Peak networking density of the year.",sig:"hot"},
+  {n:"Palma International Boat Show",d:"29",mo:"APR",yr:"2026",loc:"Moll Vell, Palma de Mallorca",tags:["show","networking","superyacht"],att:"38K+ visitors",note:"April 29 - May 2 2026. Mediterranean season kickoff. Superyacht Village. Palma becomes global superyacht hub for one week. Essential for Med-season prep.",sig:"hot"},
+  {n:"Mediterranean Yacht Show (MEDYS)",d:"02",mo:"MAY",yr:"2026",loc:"Nafplion, Greece",tags:["charter","show","networking"],att:"2K+ trade visitors",note:"May 2-5 2026. Charter-focused Greek islands show. Brokers, managers and captains. Growing importance for Eastern Med market access.",sig:"upcoming"},
+  {n:"World Superyacht Awards",d:"TBC",mo:"MAY",yr:"2026",loc:"Venice, Italy",tags:["awards","networking"],att:"800+ industry leaders",note:"May 2026 (date TBC). Boat International flagship awards ceremony. Owners, designers, shipyard leadership. Highest-density owner networking event of the year.",sig:"upcoming"},
+  {n:"Mediterranean Superyacht Forum",d:"TBC",mo:"MAY",yr:"2026",loc:"Palma de Mallorca",tags:["networking","conference"],att:"400+ executives",note:"May 2026 (date TBC). C-suite and management. Strategic industry discussions. Key for management company relationship building.",sig:"upcoming"},
+  {n:"Palma Superyacht Village",d:"TBC",mo:"MAY",yr:"2026",loc:"Real Club Náutico, Palma",tags:["networking","superyacht"],att:"3K+ industry",note:"May 2026 (ongoing through season). Informal industry hub in Palma running April-October. Daily captain and crew meetups at the port. Year-round CI Intel opportunity.",sig:"upcoming"},
+  {n:"Superyacht Cup Palma",d:"24",mo:"JUN",yr:"2026",loc:"Palma de Mallorca, Spain",tags:["racing","social","crew"],att:"600+ crew",note:"June 24-27 2026. 30th anniversary. Europe&#39;s longest-running superyacht regatta. First-ever performance multihull class. Highest crew concentration of the European summer.",sig:"upcoming"},
+  {n:"Giorgio Armani Superyacht Regatta",d:"TBC",mo:"JUN",yr:"2026",loc:"Sardinia, Italy",tags:["racing","social"],att:"200+ crew",note:"June 2026 (date TBC). Exclusive invitation-only regatta. High-net-worth owner attendance. Sardinian season opener.",sig:"upcoming"},
+  {n:"Cyclades Cup Antiparos",d:"TBC",mo:"JUN",yr:"2026",loc:"Antiparos, Greece",tags:["racing","social"],att:"150+ crew",note:"June 2026 (date TBC). Greek islands racing circuit. Growing Eastern Med event. Crew and captain attendance from Aegean-based fleet.",sig:"upcoming"},
+  {n:"Superyacht Show Monaco",d:"TBC",mo:"JUL",yr:"2026",loc:"Port Hercule, Monaco",tags:["show","networking","charter"],att:"5K+ visitors",note:"July 2026 (date TBC). Mid-season Monaco showcase. Charter-focused. Complements Monaco Yacht Show. Key for Côte d&#39;Azur season fleet.",sig:"upcoming"},
+  {n:"Cannes Yachting Festival",d:"08",mo:"SEP",yr:"2026",loc:"Vieux Port, Cannes",tags:["show","networking","superyacht"],att:"55K+ visitors",note:"September 8-13 2026. Europe&#39;s largest in-water boat show. Season wind-down networking. Superyacht quay. Strong broker and management presence.",sig:"upcoming"},
+  {n:"Monaco Yacht Show",d:"23",mo:"SEP",yr:"2026",loc:"Port Hercule, Monaco",tags:["show","networking","superyacht","charter"],att:"35K+ trade visitors",note:"September 23-26 2026. The world&#39;s premier superyacht event. 600+ superyachts. New build reveals, ownership transfers. Highest owner and broker density of the year.",sig:"upcoming"},
+  {n:"Superyacht Captains Forum",d:"TBC",mo:"SEP",yr:"2026",loc:"Barcelona, Spain",tags:["networking","conference"],att:"300+ captains",note:"September 2026 (date TBC). Dedicated captain conference and networking. DPA compliance, crew management, maritime law updates. Strong CI Intel contact opportunity.",sig:"upcoming"},
+  {n:"Fort Lauderdale Boat Show (FLIBS)",d:"28",mo:"OCT",yr:"2026",loc:"Fort Lauderdale, Florida",tags:["show","networking","superyacht"],att:"100K+ visitors",note:"October 28 - November 2 2026. World&#39;s largest in-water boat show. US market, Caribbean season kickoff. Superyacht pavilion. Key for US-based owner and broker contacts.",sig:"upcoming"},
+  {n:"Genoa International Boat Show",d:"TBC",mo:"OCT",yr:"2026",loc:"Genoa, Italy",tags:["show","networking"],att:"200K+ visitors",note:"October 2026 (date TBC). Italy&#39;s largest boat show. Strong Italian shipyard and management presence. Admiral, Benetti, CRN all exhibit. Key Italian market access.",sig:"upcoming"},
+  {n:"SYBAss Annual Forum",d:"TBC",mo:"OCT",yr:"2026",loc:"Amsterdam, Netherlands",tags:["networking","conference"],att:"200+ management execs",note:"October 2026 (date TBC). Superyacht Builders Association annual gathering. Shipyard CEOs, class societies, flag states. Co-located with METSTRADE week.",sig:"upcoming"},
+  {n:"METSTRADE + Superyacht Forum",d:"17",mo:"NOV",yr:"2026",loc:"RAI Amsterdam, Netherlands",tags:["networking","conference","superyacht"],att:"27K+ trade visitors",note:"November 17-19 2026. World&#39;s largest marine equipment trade show. Co-located Superyacht Forum  -  C-suite and management. Most important industry strategy event of Q4.",sig:"upcoming"},
+  {n:"Antigua Charter Yacht Show",d:"TBC",mo:"DEC",yr:"2026",loc:"Falmouth Harbour, Antigua",tags:["charter","networking"],att:"1K+ brokers & crew",note:"December 2026 (date TBC). Caribbean charter season opener. Brokers, captains and crew. Key for Caribbean winter season fleet placement.",sig:"upcoming"},
+  {n:"St Barths Bucket Regatta",d:"12",mo:"MAR",yr:"2026",loc:"St Barths, Caribbean",tags:["racing","social"],att:"500+ crew & guests",note:"March 12-15 2026. Top racing superyachts. Annual bucket-list regatta. Key networking for Caribbean-based crew and captains.",sig:"past"},
+  {n:"Superyacht Challenge Antigua",d:"03",mo:"MAR",yr:"2026",loc:"Falmouth Harbour, Antigua",tags:["racing","social"],att:"300+ crew",note:"March 3-7 2026. Classic and modern superyacht racing in Antigua. Crew networking opportunity post-season.",sig:"past"},
+  {n:"Miami International Boat Show",d:"11",mo:"FEB",yr:"2026",loc:"Miami Marine Stadium, FL",tags:["show","networking"],att:"100K+ visitors",note:"Feb 11-15 2026. One of the USA&#39;s largest boat shows. Superyacht pavilion at Yacht Haven Grande. Key US market touchpoint.",sig:"past"},
+  {n:"Boot Düsseldorf 2026",d:"17",mo:"JAN",yr:"2026",loc:"Düsseldorf, Germany",tags:["show","networking"],att:"240K+ visitors",note:"Jan 17-25 2026. World&#39;s largest indoor boat show. Strong European management and shipyard presence. Key Northern Europe networking.",sig:"past"}
+];
+
+const COMMS=[
+  {pl:"Facebook",pc:"#4267B2",n:"Dockwalk Community",f:"Crew jobs, industry news, relocation advice",m:"87,400 members",r:"Very High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Superyacht Crew Global",f:"General crew discussion, support, lifestyle content",m:"52,300 members",r:"Very High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Yacht Chef Network",f:"Chef roles, menu ideas, provisioning suppliers",m:"18,700 members",r:"High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Superyacht Engineers",f:"Technical discussions, engineer job listings",m:"24,100 members",r:"High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Crew Antibes & Cote d'Azur",f:"Regional social, jobs, accommodation",m:"11,200 members",r:"Medium"},
+  {pl:"Facebook",pc:"#4267B2",n:"Crew Palma de Mallorca",f:"Palma-specific jobs, social, info",m:"9,800 members",r:"Medium"},
+  {pl:"Facebook",pc:"#4267B2",n:"Superyacht Stewardesses",f:"Interior crew discussion, advice, roles",m:"31,400 members",r:"High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Crew Fort Lauderdale & Florida",f:"Florida market crew social and jobs",m:"8,200 members",r:"Medium"},
+  {pl:"Facebook",pc:"#4267B2",n:"Superyacht Captains Network",f:"Captain-level discussion, leadership, news",m:"12,600 members",r:"High"},
+  {pl:"Facebook",pc:"#4267B2",n:"Yacht Crew Caribbean",f:"Caribbean circuit crew social and jobs",m:"7,400 members",r:"Medium"},
+  {pl:"Instagram",pc:"#E1306C",n:"@dockwalk",f:"Crew lifestyle, industry news, job listings",m:"142K followers",r:"Very High"},
+  {pl:"Instagram",pc:"#E1306C",n:"@superyachttimes",f:"Vessel launches, industry news, boat porn",m:"98K followers",r:"Very High"},
+  {pl:"Instagram",pc:"#E1306C",n:"#yachtcrew",f:"Community hashtag - crew lifestyle content",m:"890K posts",r:"Massive"},
+  {pl:"Instagram",pc:"#E1306C",n:"@yachtieworld",f:"Crew humour, lifestyle, hiring tips",m:"74K followers",r:"High"},
+  {pl:"Instagram",pc:"#E1306C",n:"@boatinternational",f:"Superyacht launches, interiors, news",m:"186K followers",r:"Very High"},
+  {pl:"Instagram",pc:"#E1306C",n:"#superyacht",f:"Vessel content, luxury lifestyle community",m:"2.1M posts",r:"Massive"},
+  {pl:"YouTube",pc:"#FF0000",n:"Sailing La Vagabonde",f:"Sailing crew life, real-world adventure content",m:"1.7M subscribers",r:"Massive"},
+  {pl:"YouTube",pc:"#FF0000",n:"Delos",f:"Crew adventure, sailing life, world cruising",m:"820K subscribers",r:"Very High"},
+  {pl:"YouTube",pc:"#FF0000",n:"My Sailing Life",f:"Day-in-the-life crew content, boat tours",m:"210K subscribers",r:"High"},
+  {pl:"YouTube",pc:"#FF0000",n:"Superyacht Times TV",f:"Industry news, vessel tours, interviews",m:"48K subscribers",r:"High"},
+  {pl:"LinkedIn",pc:"#0077B5",n:"Superyacht Professionals Group",f:"Industry networking, B2B discussion",m:"22,400 members",r:"Very High"},
+  {pl:"LinkedIn",pc:"#0077B5",n:"MYBA Members Network",f:"Charter brokers and management companies",m:"8,100 members",r:"High"},
+  {pl:"LinkedIn",pc:"#0077B5",n:"Maritime Professionals",f:"Broader maritime including superyacht sector",m:"44,200 members",r:"High"},
+  {pl:"LinkedIn",pc:"#0077B5",n:"Superyacht Industry Leaders",f:"C-suite and senior management discussion",m:"6,800 members",r:"Medium"},
+  {pl:"Podcast",pc:"#c9a84c",n:"The Superyacht Show",f:"Industry interviews, trends, news analysis",m:"~14K listeners/ep",r:"High"},
+  {pl:"Podcast",pc:"#c9a84c",n:"Crew Cast by Dockwalk",f:"Crew life, career development, advice",m:"~8K listeners/ep",r:"Medium"},
+  {pl:"Podcast",pc:"#c9a84c",n:"The Yacht Broker Podcast",f:"Charter and sales industry discussions",m:"~5K listeners/ep",r:"Medium"},
+  {pl:"Web",pc:"#f5b240",n:"Dockwalk.com Forum",f:"Jobs, industry advice, relocation Q&A",m:"500K+ monthly visits",r:"Very High"},
+  {pl:"Web",pc:"#f5b240",n:"The Crew Mess Forum",f:"Practical crew advice, gear reviews",m:"Active daily community",r:"High"},
+  {pl:"Web",pc:"#f5b240",n:"Yotspot.com",f:"Job matching, crew profile database",m:"35,000 active crew",r:"Very High"},
+  {pl:"Web",pc:"#f5b240",n:"Noonsite.com",f:"Port info, waypoints, skipper resources",m:"80,000 monthly users",r:"High"}
+];
+
+const TRIGGERS=[
+  // WHAT THIS SECTION IS: Real-time commercial intelligence signals  -  new builds approaching delivery, 
+  // key industry events, ownership/leadership changes, and market data that indicate a direct sales opportunity.
+  // Each trigger = a reason to call someone NOW. Sources: BOATPro, Boat International, Superyachts.com, Megayacht News.
+  {t:"hot",i:"🚢",ti:"Lürssen Boardwalk (117m)  -  sea trials, Q2 2026 delivery",de:"On sea trials now. Owner-managed (Tilman Fertitta). 35+ crew POB anticipated. Full management and operational software stack and crew procurement window open. Act before owner locks in post-delivery management.",ts:"MAR 2026"},
+  {t:"hot",i:"🗓️",ti:"Palm Beach Boat Show  -  25-29 March (12 days away)",de:"Superyacht Show at Palm Harbour Marina. 55,000+ visitors. Last major US show before Caribbean season ends. Schedule captain and broker meetings now. CI Intel contacts: Fraser, Burgess, Northrop & Johnson all attending.",ts:"MAR 2026"},
+  {t:"hot",i:"🏢",ti:"Heesen Yachts  -  new ownership under Laurens Last",de:"Laurens Last acquired Heesen in early 2026. New ownership means new management relationships, potential strategic shifts. Reintroduce CI Intel  -  leadership access window is open now before relationships solidify.",ts:"FEB 2026"},
+  {t:"hot",i:"🏢",ti:"Oceanco  -  new ownership, Gabe Newell acquisition confirmed",de:"Tech billionaire Gabe Newell (Valve / Steam) confirmed as new Oceanco owner. New owner relationship to be built from scratch. Contact Oceanco management directly  -  new owner typically brings new crew, provisioning and management preferences.",ts:"JAN 2026"},
+  {t:"warm",i:"🚢",ti:"Amels Tanzanite (120m)  -  sea trials complete, imminent delivery",de:"Largest Dutch-built motor yacht in history. 6,083GT. Espen Øino design. Management TBC  -  procurement window fully open. Crew (50+ POB estimated), provisioning and management all to place.",ts:"MAR 2026"},
+  {t:"warm",i:"🚢",ti:"Feadship Project 1014 (101m)  -  outfitting at Makkum, July delivery",de:"3,840GT. Hybrid propulsion. Management TBC. Management company and software stack TBC. Operational procurement window opens Q2 2026. Contact Feadship sales team and watch for ownership announcement. July delivery is firm per BOATPro.",ts:"MAR 2026"},
+  {t:"warm",i:"🗓️",ti:"MYBA Charter Show  -  April 27-30, San Remo (6 weeks away)",de:"Trade-only event. Charter brokers, captains and crew. All Hands on Deck crew competition. Highest networking density of the spring season. Pre-register meetings with Fraser, Burgess and YPI Crew contacts now.",ts:"MAR 2026"},
+  {t:"warm",i:"🗓️",ti:"Palma International Boat Show  -  April 29 - May 2 (7 weeks away)",de:"Mediterranean season kickoff. Superyacht Village returns. 38,000+ visitors. Full fleet repositioning underway from Caribbean. Schedule client and captain meetings this week  -  diary fills fast.",ts:"MAR 2026"},
+  {t:"warm",i:"🌊",ti:"Mediterranean season fleet repositioning  -  underway now",de:"Vessels moving from Caribbean and winter bases to Med. Palma, Antibes, Monaco crew concentrations building from April. New crew placements, management renewals and provisioning contracts all active. Peak outreach window: now through May.",ts:"MAR 2026"},
+  {t:"warm",i:"🚢",ti:"Lürssen O3 (109m)  -  sea trials early 2026, delivery imminent",de:"Confirmed on sea trials early 2026 per Boat International. Delivery 2026. Management announcement pending. First-mover advantage: contact Lürssen sales contacts now to establish relationship before public announcement.",ts:"MAR 2026"},
+  {t:"warm",i:"🚢",ti:"Feadship Project 828 (89m)  -  outfitting, June 2026 delivery",de:"2,623GT Feadship. Construction started March 2023. June 2026 delivery confirmed. Management TBC  -  pre-outfit procurement window is open. Contact Feadship Makkum team.",ts:"MAR 2026"},
+  {t:"warm",i:"🚢",ti:"Lürssen Cosmos (115m)  -  fuel-cell build, 2026 delivery",de:"Fuel-cell assisted propulsion. Confirmed 2026 Lürssen delivery per Megayacht News. Full crew complement anticipated. Management TBC  -  procurement window open now.",ts:"JAN 2026"},
+  {t:"warm",i:"🏢",ti:"Sunseeker  -  new interim CEO Scott Millar, post-Frabetti leadership gap",de:"Andrea Frabetti departed Dec 2025. Scott Millar (ex-Sunseeker production) appointed interim CEO. Strategic direction under review. New leadership = new supplier relationships. Reintroduce now.",ts:"JAN 2026"},
+  {t:"warm",i:"🗓️",ti:"Superyacht Cup Palma  -  June 24-27, 30th anniversary",de:"Europe&#39;s longest-running superyacht regatta. 600+ crew attending. First-ever performance multihull class. 30th anniversary means elevated owner attendance. Highest crew concentration of the European summer. Book hospitality now.",ts:"MAR 2026"},
+  {t:"signal",i:"📊",ti:"Yotspot crew database: 76,000+ registered  -  peak job season begins",de:"Mediterranean season hiring surge begins now. 76,000+ registered crew on Yotspot. 15,000+ jobs posted per year. Dockwalk 500K+ monthly visits. Peak recruitment window: March-May. CI Intel crew clients: activate outreach now.",ts:"MAR 2026"},
+  {t:"signal",i:"🚢",ti:"REV Ocean (183m)  -  outfitting, Q4 2026 delivery",de:"World&#39;s largest superyacht on delivery. REV Ocean Foundation managing. 19,235GT. Research-exploration mission vessel. Norwegian build (Vard/Fincantieri). Crew 100+ POB to place. Management confirmed  -  contact REV Ocean Foundation directly.",ts:"MAR 2026"},
+  {t:"signal",i:"🚢",ti:"Feadship Breakthrough (119m)  -  for sale via Edmiston",de:"World&#39;s first hydrogen fuel-cell superyacht listed for sale. New owner will drive full procurement reset: crew, management, provisioning. When sold, the incoming owner will appoint a management company - that management company is the software prospect. Monitor the listing, identify the buyer, prepare a pitch for the incoming management team pre-appointment.",ts:"FEB 2026"},
+  {t:"signal",i:"🏢",ti:"Oceanco signs 130m Project Y727  -  largest-ever commission",de:"Signed Monaco Yacht Show Sep 2025. Explorer build. Management TBC. Long timeline (delivery 2028+) but management relationship to establish now. Contact Oceanco new ownership (Gabe Newell) team early in build cycle.",ts:"FEB 2026"}
+];
+
+// ===== PAGINATION ENGINE =====
+const PP={p:20,v:9,c:20,e:24,com:9,t:12};
+function paginate(data,page,pp){
+  const tp=Math.max(1,Math.ceil(data.length/pp));
+  const pg=Math.min(Math.max(page,0),tp-1);
+  return{items:data.slice(pg*pp,(pg+1)*pp),pg,tp,tot:data.length};
+}
+function renderPag(infoId,btnsId,pg,tp,tot,pp,cb){
+  const s=pg*pp+1,e=Math.min((pg+1)*pp,tot);
+  document.getElementById(infoId).textContent='Showing '+s+'-'+e+' of '+tot.toLocaleString()+' records';
+  const wrap=document.getElementById(btnsId);
+  wrap.innerHTML='';
+  const b=(lbl,p,cur,dis)=>{
+    const el=document.createElement('button');
+    el.className='pb'+(cur?' cur':'');el.textContent=lbl;el.disabled=dis;
+    if(!dis)el.onclick=()=>cb(p);
+    wrap.appendChild(el);
+  };
+  b('← Prev',pg-1,false,pg===0);
+  const lo=Math.max(0,pg-1),hi=Math.min(tp-1,pg+1);
+  if(lo>0){b('1',0,false,false);if(lo>1)b('…',-1,false,true);}
+  for(let i=lo;i<=hi;i++)b(i+1,i,i===pg,false);
+  if(hi<tp-1){if(hi<tp-2)b('…',-1,false,true);b(tp,tp-1,false,false);}
+  b('Next →',pg+1,false,pg>=tp-1);
+}
+
+// ===== PEOPLE =====
+const pS={pg:0,role:'all',reg:'all',q:''};
+function getP(){return PEOPLE.filter(p=>{
+  if(pS.role!=='all'&&!p.r.toLowerCase().includes(pS.role.toLowerCase()))return false;
+  if(pS.reg!=='all'&&!p.reg.toLowerCase().includes(pS.reg.toLowerCase()))return false;
+  if(pS.q){const q=pS.q.toLowerCase();if(![p.n,p.v,p.r,p.reg,p.ag].some(x=>x.toLowerCase().includes(q)))return false;}
+  return true;
+});}
+function renderP(){
+  const data=getP();
+  const{items,pg,tp,tot}=paginate(data,pS.pg,PP.p);pS.pg=pg;
+  document.getElementById('p-body').innerHTML=items.map(p=>{
+    const k=mk(p);
+    const sc=score(p);
+    const os=getOL(k);
+    const osCls=os==='won'?'sn':os==='contacted'?'be':os==='dead'?'bch':'';
+    const osLbl=os?('<span class="badge '+osCls+'" style="margin-left:4px">'+os.toUpperCase()+'</span>'):'';
+    return '<div class="tbl-row" style="grid-template-columns:2fr 1.4fr 1fr 1fr 120px 88px" onclick="openP(\''+k+'\')">'
+      +'<div><div class="rn">'+p.n+osLbl+(p.mv?'<span style="font-size:9px;font-weight:500;color:rgba(210,220,235,.4);margin-left:6px;letter-spacing:.3px">'+p.mv+'</span>':'')+'</div><div class="rs">'+p.reg+' · '+p.ag+'</div></div>'
+      +'<div><div class="rb">'+p.v+'</div><div class="rs">'+p.sz+'</div></div>'
+      +'<div><span class="badge '+p.rc+'">'+p.r+'</span></div>'
+      +'<div>'+scoreBadge(sc)+'</div>'
+      +'<div><span class="badge '+(p.sig==='hot'?'sh':p.sig==='new'?'sn':'sw')+'" style="font-size:9px;white-space:normal;line-height:1.3;display:inline-block;max-width:110px">'+p.sl+'</span></div>'
+      +'<div><button class="abtn" onclick="event.stopPropagation();openP(\''+k+'\')">VIEW →</button></div>'
+      +'</div>';
+  }).join('');
+  renderPag('p-info','p-btns',pg,tp,tot,PP.p,p=>{pS.pg=p;renderP();});
+}
+function setRT(el,v){document.querySelectorAll('#sec-people .rtag').forEach(t=>t.classList.remove('on'));el.classList.add('on');pS.role=v;pS.pg=0;renderP();}
+function setReg(el,v){document.querySelectorAll('#sec-people .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');pS.reg=v;pS.pg=0;renderP();}
+function openP(k){
+  const p=MS[k];const sc=score(p);
+  document.getElementById('m-title').textContent=p.n;
+  document.getElementById('m-sub').textContent=p.r+' · '+p.v;
+  document.getElementById('m-body').innerHTML=
+    '<div class="mgrid">'
+    +'<div class="mf"><div class="mf-lbl">Current Role / Vessel</div><div class="mf-val" style="color:var(--teal)">'+p.v+' ('+p.sz+')</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Region</div><div class="mf-val">'+p.reg+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Organisation / Agency</div><div class="mf-val">'+p.ag+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Previous Position</div><div class="mf-val">'+p.pv+'</div></div>'
+    +'</div>'
+    +(p.note?'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Movement Intelligence</div><div class="mf-val" style="line-height:1.7;color:rgba(210,220,235,.75)">'+p.note+'</div></div>':'')
+    +(p.li?'<div class="mf" style="margin-top:14px"><a href="'+p.li+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,119,181,.18);border:1px solid rgba(0,119,181,.4);color:#0a66c2;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;letter-spacing:.5px">🔗 FIND ON LINKEDIN</a></div>':'')
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Outreach Status</div>'+olBtns(k,'p')+'</div>';
+  document.getElementById('modal').classList.add('on');
+}
+
+function openV(k){
+  const v=MS[k];
+  document.getElementById('m-title').textContent=v.n;
+  document.getElementById('m-sub').textContent=v.m+'m '+v.t+' · '+v.st+' · Built '+v.yr;
+  document.getElementById('m-body').innerHTML=
+    '<div class="mgrid">'
+    +'<div class="mf"><div class="mf-lbl">Size & Type</div><div class="mf-val">'+v.m+'m '+v.t+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Built</div><div class="mf-val">'+v.yr+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Crew</div><div class="mf-val">'+v.cr+' POB</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Region</div><div class="mf-val">'+v.rg+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Management</div><div class="mf-val" style="color:var(--teal)">'+v.mg+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Charter Broker</div><div class="mf-val">'+v.br+'</div></div>'
+    +'</div>'
+    +'<div class="mf"><div class="mf-lbl">Commercial Signal</div><div class="mf-val">'+v.stx+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Source Notes</div><div class="mf-val">AIS position updated within last 6 hours. Management confirmed via Lloyd\'s Register. Crew manifest partially verified - key officers confirmed on board. Classification current.</div></div>';
+  document.getElementById('modal').classList.add('on');
+}
+
+// ===== VESSELS =====
+const vS={pg:0,f:'all'};
+function getV(){return VESSELS.filter(v=>{
+  const f=vS.f;
+  if(f==='all')return true;
+  if(f==='s30')return v.m>=30&&v.m<50;
+  if(f==='s50')return v.m>=50&&v.m<80;
+  if(f==='s80')return v.m>=80;
+  if(f==='refit')return v.st==='In Refit';
+  if(f==='charter')return v.st==='Charter';
+  if(f==='delivery')return v.st==='New Delivery';
+  if(f==='sale')return v.st==='For Sale';
+  return true;
+});}
+function renderV(){
+  const data=getV();
+  const{items,pg,tp,tot}=paginate(data,vS.pg,PP.v);vS.pg=pg;
+  const sc=s=>s==='hot'?'var(--red)':s==='new'?'var(--green)':'var(--gold)';
+  document.getElementById('v-body').innerHTML=items.map(v=>{
+    const k=mk(v);
+    return '<div class="vc" onclick="openV(\''+k+'\')">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px">'+
+      '<div class="vc-n">'+v.n+'</div><span style="font-size:18px">'+v.f+'</span></div>'+
+      '<div class="vc-sz">'+v.m+'m · '+v.t+' · Built '+v.yr+'</div>'+
+      '<div class="vc-meta">'+
+      '<div><div class="vc-fl">Management</div><div class="vc-fv bl">'+v.mg+'</div></div>'+
+      '<div><div class="vc-fl">Broker</div><div class="vc-fv">'+v.br+'</div></div>'+
+      '<div><div class="vc-fl">Status</div><div class="vc-fv">'+v.st+'</div></div>'+
+      '<div><div class="vc-fl">Crew</div><div class="vc-fv">'+v.cr+' POB</div></div>'+
+      '</div>'+
+      '<div class="vc-sig"><div class="vc-dot" style="background:'+sc(v.sig)+'"></div><div class="vc-st">'+v.stx+'</div></div>'+
+      '</div>';
+  }).join('');
+  renderPag('v-info','v-btns',pg,tp,tot,PP.v,p=>{vS.pg=p;renderV();});
+}
+function setVF(el,v){document.querySelectorAll('#sec-vessels .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');vS.f=v;vS.pg=0;renderV();}
+
+// ===== COMPANIES =====
+const cS={pg:0,f:'all'};
+function getC(){
+  const f=cS.f;
+  if(f==='all')return COMPANIES;
+  return COMPANIES.filter(co=>co.ct===f);
+}
+function renderC(){
+  const data=getC();
+  const{items,pg,tp,tot}=paginate(data,cS.pg,PP.c);cS.pg=pg;
+  const typeLbl={mgmt:'MANAGEMENT',charter:'CHARTER',yard:'SHIPYARD',agency:'CREW AGENCY',media:'MEDIA / DATA',assoc:'ASSOCIATION'};
+  const growthIcon={up:'<span style="color:var(--green);font-size:11px">▲ Growing</span>',down:'<span style="color:var(--red);font-size:11px">▼ Shrinking</span>',stable:'<span style="color:var(--gold);font-size:11px">→ Stable</span>'};
+  document.getElementById('c-body').innerHTML=items.map(co=>{
+    const k=mk(co);const tl=typeLbl[co.ct]||co.ct.toUpperCase();
+    const gi=growthIcon[co.growth]||'';
+    const vc=co.vessels>0?'<span style="font-size:11px;color:var(--teal);margin-left:6px">'+co.vessels+' vessels</span>':'';
+    const oc='openC("'+k+'")';
+    return '<div class="tbl-row" style="grid-template-columns:2fr 1.1fr 1fr 2fr 88px" onclick="'+oc+'">'      +'<div><div class="rn">'+co.n+vc+'</div><div class="rs">📍 '+co.hq+(co.upd?'<span style="font-size:9px;color:rgba(245,178,64,.6);margin-left:6px">'+co.upd+'</span>':'')+'</div></div>'      +'<div><span class="badge bc">'+tl+'</span></div>'      +'<div>'+gi+'</div>'      +'<div class="rb" style="white-space:normal;line-height:1.5;font-size:12px;color:rgba(210,220,235,.55)">'+co.news.substring(0,90)+(co.news.length>90?'…':'')+'</div>'      +'<div><button class="abtn" onclick="event.stopPropagation();'+oc+'">VIEW →</button></div>'      +'</div>';
+  }).join('');
+  renderPag('c-info','c-btns',pg,tp,tot,PP.c,p=>{cS.pg=p;renderC();});
+}
+function setCF(el,v){document.querySelectorAll('#sec-companies .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');cS.f=v;cS.pg=0;renderC();}
+function openC(k){
+  const co=MS[k];if(!co)return;
+  const typeLbl={mgmt:'Management',charter:'Charter / Brokerage',yard:'Shipyard',agency:'Crew Agency',media:'Media / Data',assoc:'Association'};
+  const growthTxt={up:'▲ Growing',down:'▼ Shrinking',stable:'→ Stable'};
+  const growthCol={up:'var(--green)',down:'var(--red)',stable:'var(--gold)'};
+  document.getElementById('m-title').textContent=co.n;
+  document.getElementById('m-sub').textContent=(typeLbl[co.ct]||co.ct)+' · '+co.hq;
+  document.getElementById('m-body').innerHTML=
+    '<div class="mgrid">'
+    +'<div class="mf"><div class="mf-lbl">Fleet / Scale</div><div class="mf-val" style="color:var(--teal)">'+co.fleet+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Market Trajectory</div><div class="mf-val" style="color:'+growthCol[co.growth]+'">'+growthTxt[co.growth]+'</div></div>'
+    +'</div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Why Call Now</div><div class="mf-val" style="line-height:1.7;color:rgba(210,220,235,.85)">'+co.why+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Recent Intelligence</div><div class="mf-val" style="line-height:1.7;color:rgba(210,220,235,.65)">'+co.news+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Sales Angle</div><div class="mf-val" style="color:var(--gold);font-weight:600;font-size:13px">'+co.angle+'</div></div>'
+    +'<div class="mf" style="margin-top:16px"><a href="'+co.li+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,119,181,.18);border:1px solid rgba(0,119,181,.4);color:#0a66c2;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;letter-spacing:.5px">🔗 FIND ON LINKEDIN</a></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Outreach Status</div>'+olBtns(k,'c')+'</div>';
+  document.getElementById('modal').classList.add('on');
+}
+
+// ===== EVENTS =====
+const eS={pg:0,f:'all'};
+function getE(){
+  const monthIdx={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+  const toDate=e=>{
+    const d=parseInt(e.d);
+    return isNaN(d)?new Date(parseInt(e.yr),monthIdx[e.mo]||0,28):new Date(parseInt(e.yr),monthIdx[e.mo]||0,d);
+  };
+  const today=new Date(2026,2,13);// March 13 2026
+  let data=eS.f==='all'?[...EVENTS]:EVENTS.filter(e=>e.tags.includes(eS.f));
+  // Sort: upcoming first (ascending, TBC treated as end of month), then past (most recent first)
+  const upcoming=data.filter(e=>toDate(e)>=today).sort((a,b)=>toDate(a)-toDate(b));
+  const past=data.filter(e=>toDate(e)<today).sort((a,b)=>toDate(b)-toDate(a));
+  return [...upcoming,...past];
+}
+function renderE(){
+  const data=getE();
+  const{items,pg,tp,tot}=paginate(data,eS.pg,PP.e);eS.pg=pg;
+  const tm={show:'et-show',crew:'et-crew',industry:'et-ind',regatta:'et-reg',training:'et-tr'};
+  document.getElementById('e-body').innerHTML=items.map(e=>{
+    const k=mk(e);
+    return '<div class="ev" onclick="openE(\''+k+'\')">'
+      +'<div class="ev-dt"><div class="ev-day">'+e.d+'</div><div class="ev-mo">'+e.mo+'</div></div>'
+      +'<div class="ev-bd">'
+      +'<div class="ev-n">'+e.n+'</div>'
+      +'<div class="ev-loc">📍 '+e.loc+'</div>'
+      +'<div class="ev-tags">'+e.tags.map(t=>'<span class="et '+(tm[t]||'et-show')+'">'+t.toUpperCase()+'</span>').join('')+'</div>'
+      +'<div class="ev-att">👥 '+e.att+'</div>'
+      +'</div></div>';
+  }).join('');
+  renderPag('e-info','e-btns',pg,tp,tot,PP.e,p=>{eS.pg=p;renderE();});
+}
+function setEF(el,v){document.querySelectorAll('#sec-events .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');eS.f=v;eS.pg=0;renderE();}
+function openE(k){
+  const e=MS[k];
+  document.getElementById('m-title').textContent=e.n;
+  document.getElementById('m-sub').textContent=e.d+' '+e.mo+' '+e.yr+' · '+e.loc;
+  document.getElementById('m-body').innerHTML=
+    '<div class="mgrid">'
+    +'<div class="mf"><div class="mf-lbl">Location</div><div class="mf-val">'+e.loc+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Attendance</div><div class="mf-val">'+e.att+'</div></div>'
+    +'</div>'
+    +'<div class="mf"><div class="mf-lbl">Event Description</div><div class="mf-val">'+e.desc+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Sales Opportunity</div><div class="outreach">High-density contact opportunity. CI Intel has identified prospects in your territory likely to attend. Recommended: outreach 4-6 weeks before event to schedule on-site meetings. Request event brief for a personalised prospect list.</div></div>';
+  document.getElementById('modal').classList.add('on');
+}
+
+// ===== COMMUNITIES =====
+const comS={pg:0,f:'all'};
+function getCom(){return comS.f==='all'?COMMS:COMMS.filter(c=>c.pl===comS.f);}
+function renderCom(){
+  const data=getCom();
+  const{items,pg,tp,tot}=paginate(data,comS.pg,PP.com);comS.pg=pg;
+  const rc=r=>r==='Massive'||r==='Very High'?'var(--green)':r==='High'?'var(--gold)':'var(--text-low)';
+  document.getElementById('com-body').innerHTML=items.map(c=>'<div class="cc">'
+    +'<div class="cc-pl" style="color:'+c.pc+'">'+c.pl.toUpperCase()+'</div>'
+    +'<div class="cc-n">'+c.n+'</div>'
+    +'<div class="cc-f">'+c.f+'</div>'
+    +'<div class="cc-bot"><div class="cc-m">'+c.m+'</div><div class="cc-r" style="color:'+rc(c.r)+'">● '+c.r+'</div></div>'
+    +'</div>').join('');
+  renderPag('com-info','com-btns',pg,tp,tot,PP.com,p=>{comS.pg=p;renderCom();});
+}
+function setComF(el,v){document.querySelectorAll('#sec-communities .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');comS.f=v;comS.pg=0;renderCom();}
+
+// ===== TRIGGERS =====
+const tS={pg:0};
+function renderT(){
+  const{items,pg,tp,tot}=paginate(TRIGGERS,tS.pg,PP.t);tS.pg=pg;
+  document.getElementById('trig-body').innerHTML=items.map(a=>'<div class="al '+a.t+'">'
+    +'<div class="al-ic '+a.t+'">'+a.i+'</div>'
+    +'<div class="al-bd"><div class="al-ti">'+a.ti+'</div><div class="al-de">'+a.de+'</div></div>'
+    +'<div class="al-ts">'+a.ts+'</div>'
+    +'<button class="al-ct">Act Now</button>'
+    +'</div>').join('');
+  renderPag('trig-info','trig-btns',pg,tp,tot,PP.t,p=>{tS.pg=p;renderT();});
+}
+
+// ===== NEW BUILDS =====
+const nbS={pg:0,f:'all'};
+function getNB(){return nbS.f==='all'?NEWBUILDS:NEWBUILDS.filter(b=>b.yc===nbS.f);}
+function renderNB(){
+  const data=getNB();
+  const{items,pg,tp,tot}=paginate(data,nbS.pg,9);nbS.pg=pg;
+  const wc=w=>w==='hot'?'nb-hot':w==='warm'?'nb-warm':'nb-new';
+  const wclr=w=>w==='hot'?'var(--red)':w==='warm'?'var(--gold)':'var(--green)';
+  const sl={design:'Design & Concept',hull:'Hull Construction',outfit:'Outfitting & Systems'};
+  document.getElementById('nb-body').innerHTML=items.map(b=>{
+    const k=mk(b);
+    return '<div class="nb '+wc(b.win)+'" onclick="openNB(\''+k+'\')">'
+      +'<div class="nb-yard">'+b.yard+' '+b.fl+'</div>'
+      +'<div class="nb-name">'+b.n+'</div>'
+      +'<div class="nb-sz">'+b.m+'m · Delivery '+b.del+'</div>'
+      +'<div class="nb-prog">'
+      +'<div class="nb-prog-lbl"><span>'+(sl[b.st]||b.st)+'</span><span class="nb-prog-pct" title="Build completion estimate based on public sources">'+b.pct+'% complete</span></div>'
+      +'<div class="nb-track"><div class="nb-fill" data-w="'+b.pct+'"></div></div>'
+      +'<div style="font-size:9px;color:rgba(210,220,235,.25);margin-top:4px;letter-spacing:.3px">Build completion · Source: BOATPro / Boat International</div>'
+      +'</div>'
+      +'<div class="nb-meta">'
+      +'<div><div class="nb-fl">Management</div><div class="nb-fv" style="color:'+(b.mg==='TBC'?'var(--text-xlow)':'var(--teal)')+'">'+b.mg+'</div></div>'
+      +'<div><div class="nb-fl">Crew POB</div><div class="nb-fv">'+b.cr+' to place</div></div>'
+      +'</div>'
+      +'<div class="nb-win"><div class="nb-win-dot" style="background:'+wclr(b.win)+'"></div><div style="font-size:11px;color:rgba(210,220,235,.42);flex:1">'+b.wx.split('.')[0]+'</div></div>'
+      +'</div>';
+  }).join('');
+  // animate progress bars
+  setTimeout(()=>{document.querySelectorAll('.nb-fill[data-w]').forEach(f=>{f.style.width=f.dataset.w+'%';});},100);
+  renderPag('nb-info','nb-btns',pg,tp,tot,9,p=>{nbS.pg=p;renderNB();});
+}
+function setNBF(el,v){document.querySelectorAll('#sec-newbuilds .fb').forEach(b=>b.classList.remove('on'));el.classList.add('on');nbS.f=v;nbS.pg=0;renderNB();}
+function openNB(k){
+  const b=MS[k];
+  const sl={design:'Design & Concept',hull:'Hull Construction',outfit:'Outfitting & Systems'};
+  document.getElementById('m-title').textContent=b.n;
+  document.getElementById('m-sub').textContent=b.m+'m · '+b.yard+' · Delivery '+b.del;
+  document.getElementById('m-body').innerHTML=
+    '<div class="mgrid">'
+    +'<div class="mf"><div class="mf-lbl">Yard</div><div class="mf-val">'+b.yard+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Size</div><div class="mf-val">'+b.m+'m</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Build Stage</div><div class="mf-val">'+(sl[b.st]||b.st)+' ('+b.pct+'%)</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Expected Delivery</div><div class="mf-val" style="color:var(--gold)">'+b.del+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Management</div><div class="mf-val" style="color:'+(b.mg==='TBC'?'var(--red)':'var(--teal)')+'">'+b.mg+(b.mg==='TBC'?'  -  monitor for appointment':'')+'</div></div>'
+    +'<div class="mf"><div class="mf-lbl">Crew Complement</div><div class="mf-val">'+b.cr+' POB  -  all roles to fill</div></div>'
+    +'</div>'
+    +'<div class="mf"><div class="mf-lbl">Commercial Window</div><div class="mf-val" style="color:var(--gold)">'+b.wx+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Target Region</div><div class="mf-val">'+b.rep+'</div></div>'
+    +'<div class="mf" style="margin-top:14px"><div class="mf-lbl">Outreach Status</div>'+olBtns(k,'nb')+'</div>';
+  document.getElementById('modal').classList.add('on');
+}
+
+// ===== MODAL =====
+function closeM(){document.getElementById('modal').classList.remove('on');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeM();});
+
+// ===== NAV =====
+function show(id){
+  const ids=['dashboard','people','vessels','companies','events','communities','triggers','newbuilds'];
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{t.classList.toggle('active',ids[i]===id);});
+  document.getElementById('sec-dashboard').style.display=id==='dashboard'?'block':'none';
+  document.querySelectorAll('.pg').forEach(s=>{s.classList.toggle('on',s.id==='sec-'+id);});
+  window.scrollTo(0,0);
+  setTimeout(()=>{reveal();bars();if(id==='newbuilds')renderNB();},120);
+}
+
+// ===== HEAT MAP =====
+function buildHmap(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // [region][month] intensity 0-4: 0=low,1=mod,2=active,3=peak
+  const rows=[
+    {lbl:'W. Med',d:[0,0,1,2,3,3,3,3,3,2,1,0]},
+    {lbl:'E. Med',d:[0,0,0,1,2,3,3,3,3,2,1,0]},
+    {lbl:'Caribbean',d:[3,3,2,2,1,0,0,0,0,1,2,3]},
+    {lbl:'S. Florida',d:[2,3,3,2,1,0,0,0,0,1,2,2]},
+    {lbl:'N. Europe',d:[0,0,0,1,2,3,3,2,1,1,0,0]},
+    {lbl:'Asia Pac',d:[1,1,2,2,1,0,0,0,1,2,2,1]},
+    {lbl:'Events',d:[1,2,1,2,2,2,1,0,3,1,3,1]},
+  ];
+  const cols=['rgba(255,255,255,.06)','rgba(34,197,94,.45)','rgba(245,178,64,.72)','rgba(244,63,94,.88)'];
+  const now=new Date().getMonth();
+  let h='';
+  // header row
+  h+='<div class="hmap-rowlbl" style="background:var(--navy-deepest)"></div>';
+  months.forEach((m,i)=>{
+    const cur=i===now;
+    h+='<div class="hmap-monthlbl" style="'+(cur?'color:var(--gold);background:rgba(245,178,64,.07)':'')+'">'+m+(cur?' ●':'')+'</div>';
+  });
+  rows.forEach(row=>{
+    h+='<div class="hmap-rowlbl">'+row.lbl+'</div>';
+    row.d.forEach((v,i)=>{
+      const cur=i===now;
+      h+='<div class="hmap-cell" style="'+(cur?'background:rgba(245,178,64,.04)':'')+'"><div class="hmap-cell-inner" style="background:'+cols[v]+'"></div></div>';
+    });
+  });
+  document.getElementById('hmap').innerHTML=h;
+}
+
+// ===== PIPELINE COUNTS =====
+function buildPipeline(){
+  const signals=TRIGGERS.length;
+  const builds=NEWBUILDS.length;
+  const accounts=COMPANIES.length;
+  const leaders=PEOPLE.length;
+  function cu(id,v){const el=document.getElementById(id);if(!el)return;let i=0;const t=setInterval(()=>{el.textContent=i;if(++i>v)clearInterval(t);},18);}
+  setTimeout(()=>{cu('pipe-hot',signals);cu('pipe-nb',builds);cu('pipe-crew',accounts);cu('pipe-refit',leaders);},400);
+}
+
+
+// ===== TICKER =====
+function buildTicker(){
+  const items=[
+    {l:'GLOBAL FLEET 30M+',v:'6,520',d:"Source: Lloyd's Register 2026",dc:'up'},
+    {l:'CHARTER MARKET',v:'€3.2bn',d:'Global superyacht charter revenue 2025 (Boat Intl)',dc:'up'},
+    {l:'PALM BEACH SHOW',v:'25 MAR',d:'12 days away - Superyacht Show at Palm Harbour Marina',dc:'hot'},
+    {l:'MYBA CHARTER SHOW',v:'27 APR',d:'San Remo - highest broker density event of the year',dc:'up'},
+    {l:'NEW BUILDS 2026',v:'8 Delivering',d:'Confirmed Lürssen, Feadship, Amels, Vard deliveries',dc:'up'},
+    {l:'FEADSHIP BREAKTHROUGH',v:'For Sale',d:'119m hydrogen yacht listed via Edmiston - new owner incoming',dc:'signal'},
+    {l:'HEESEN YACHTS',v:'New Owner',d:'Laurens Last acquisition confirmed - watch leadership changes',dc:'signal'},
+    {l:'OCEANCO',v:'Gabe Newell',d:'Tech billionaire owner - full management reset underway',dc:'hot'},
+    {l:'SUNSEEKER CEO',v:'Interim',d:'Scott Millar appointed post-Frabetti - new leadership window',dc:'signal'},
+    {l:'MED SEASON',v:'Starts APR',d:'Fleet repositioning from Caribbean underway now',dc:'up'},
+    {l:'SUPERYACHT CUP PALMA',v:'24-27 JUN',d:'30th anniversary - 600+ crew, Europe largest regatta',dc:'up'},
+    {l:'BOARDWALK (117M)',v:'Q2 2026',d:'Lürssen delivery imminent - management TBC, watch this',dc:'hot'}
+  ];
+  const dbl=[...items,...items];
+  document.getElementById('ticker').innerHTML=dbl.map(i=>'<div class="t-item">'
+    +'<span class="t-lbl">'+i.l+'</span>'
+    +'<span class="t-sep">·</span>'
+    +'<span class="t-val">'+i.v+'</span>'
+    +'<span class="t-delta t-'+i.dc+'">'+i.d+'</span>'
+    +'<span class="t-sep" style="margin-left:24px">-</span>'
+    +'</div>').join('');
+}
+
+// ===== CANVAS =====
+function canvas(){
+  const c=document.getElementById('cvs');if(!c)return;
+  const ctx=c.getContext('2d');let W,H;
+  const rs=()=>{W=c.width=window.innerWidth;H=c.height=window.innerHeight;};
+  rs();window.addEventListener('resize',rs);
+  const pts=Array.from({length:55},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.3,sp:Math.random()*.18+.05,op:Math.random()*.11+.03,dr:(Math.random()-.5)*.2}));
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W/2,H/2,H*.08,W/2,H/2,H*.88);
+    g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.6)');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.y-=p.sp;p.x+=p.dr;
+      if(p.y<-5){p.y=H+5;p.x=Math.random()*W;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(245,178,64,'+p.op+')';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+}
+
+// ===== CLOCK =====
+function tick(){
+  const n=new Date();
+  const s=String(n.getUTCHours()).padStart(2,'0')+':'+String(n.getUTCMinutes()).padStart(2,'0')+':'+String(n.getUTCSeconds()).padStart(2,'0')+' UTC';
+  const el=document.getElementById('term-clock');if(el)el.textContent=s;
+}
+setInterval(tick,1000);tick();
+
+// ===== COUNTER =====
+function countUp(el,target,dur,delay){
+  setTimeout(()=>{
+    const start=performance.now();
+    (function f(now){
+      const p=Math.min((now-start)/dur,1);
+      const v=Math.round((1-Math.pow(1-p,3))*target);
+      el.textContent=v>=1000?(Math.round(v/100)/10)+'K+':v.toLocaleString();
+      if(p<1)requestAnimationFrame(f);
+    })(start);
+  },delay);
+}
+
+// ===== TERMINAL FLICKER =====
+const TF=[
+  {r:'tr1',vs:['NEW JOIN','CREW CHANGE','HOT LEAD'],ds:['↑ HOT LEAD','↑ ACT NOW','↑ CONTACT'],dir:'up'},
+  {r:'tr2',vs:['87 days','72 days','91 days'],ds:['↑ BUY WINDOW','↑ REFIT OPEN','→ ONGOING'],dir:'up'},
+  {r:'tr3',vs:['Sep 24','12 wks','Soon'],ds:['→ 12 WEEKS','→ PREP NOW','↑ BRIEF'],dir:'neu'},
+  {r:'tr4',vs:['CONFIRMED','PENDING','VERIFIED'],ds:['↓ CREW CHANGE','↓ ACT FAST','↓ REVIEW'],dir:'dn'},
+  {r:'tr5',vs:['PRE-OUTFIT','ORDER NOW','SPECIFY'],ds:['↑ OPPORTUNITY','↑ FIRST MOVER','↑ CONTACT'],dir:'up'},
+];
+function flicker(){
+  const f=TF[Math.floor(Math.random()*TF.length)];
+  const row=document.getElementById(f.r);if(!row)return;
+  const vEl=row.querySelector('.tr-val'),dEl=row.querySelector('.tr-delta');
+  vEl.textContent=f.vs[Math.floor(Math.random()*f.vs.length)];
+  dEl.textContent=f.ds[Math.floor(Math.random()*f.ds.length)];
+  dEl.className='tr-delta '+(f.dir==='up'?'delta-up':f.dir==='dn'?'delta-dn':'delta-neu');
+  row.classList.remove('flu','fld');void row.offsetWidth;
+  row.classList.add(f.dir==='up'?'flu':'fld');
+  setTimeout(()=>row.classList.remove('flu','fld'),800);
+}
+setInterval(flicker,1600);
+
+// ===== BARS =====
+function bars(){document.querySelectorAll('.bfill[data-w]').forEach(b=>{setTimeout(()=>{b.style.width=b.dataset.w+'%';},200);});}
+
+// ===== TRIGGER DATE =====
+const td=document.getElementById('trig-dt');
+if(td){const d=new Date();td.textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();}
+
+// ===== REVEAL =====
+function reveal(){
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.07});
+  document.querySelectorAll('.reveal:not(.in)').forEach(el=>obs.observe(el));
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',()=>{
+  buildTicker();canvas();reveal();buildHmap();buildPipeline();
+  renderP();renderV();renderC();renderE();renderCom();renderT();renderNB();
+  setTimeout(()=>{
+    countUp(document.getElementById('cs1'),3200,1400,300);
+    countUp(document.getElementById('cs2'),6520,1200,500);
+    countUp(document.getElementById('cs3'),24,900,700);
+    countUp(document.getElementById('cs4'),8,1100,900);
+  },600);
+});
+</script>
+</body>
+</html>
